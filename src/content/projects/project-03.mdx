@@ -1,0 +1,70 @@
+---
+title: HaloVision
+description: Principal AI Engineer, February–December 2025 
+role: Founding AI Engineer / Technical Lead
+---
+
+import HaloVisionDiagram from '@/components/HaloVisionDiagram'
+import ProjectDetailSection from '@/components/ProjectDetailSection'
+
+<HaloVisionDiagram />
+
+## HaloVision
+
+HaloVision is an AI-driven employee interview platform for understanding goals, blockers, team dynamics, and recurring organizational problems. I built the backend and AI architecture from scratch, taking the platform from prototype to **three enterprise customers in under three months, with 300+ employee conversations in the first production month**.  
+
+The core challenge was sustaining coherent, multi-topic voice conversations for 30+ minutes while maintaining real-time latency. The agent needed to remember what employees had already said, ask useful follow-ups, move naturally between topics, and produce structured insights grounded in their actual words.
+
+<ProjectDetailSection title="Stateful Voice Conversations">
+
+* Real 30+ minute interviews exposed problems with employees answering topics out of order, providing information relevant to multiple questions, and covering subjects before the agent reached them.
+* Modeled interviews as stateful workflows with explicit topic state and transitions, keeping deterministic decisions in application code and using the LLM for language understanding, reasoning, and follow-ups.
+* Implemented the orchestration with LangGraph in a “voice sandwich” architecture connecting real-time speech recognition, the stateful agent, and text-to-speech, with selective context carried between topics.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Grounded Extraction & Organizational Intelligence">
+
+* Replaced unreliable prompt-only extraction with a grounded pipeline combining LLM reasoning, RAG, TF-IDF, BERTopic clustering, and embedding similarity.
+* Validated structured goals, blockers, and insights through schemas, deterministic checks, and secondary verification before allowing generated results to become application data.
+* Used similarity and clustering across interviews to identify recurring goals, blockers, and organizational problems rather than analyzing each conversation in isolation.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Reliability & Failure Recovery">
+
+* Designed for long-running conversations spanning independently unreliable components: speech recognition, LLM inference, orchestration, text-to-speech, persistence, and external APIs.
+* Kept interview progress in explicit application state and isolated component failures so malformed responses or external-service errors could not corrupt the overall workflow.
+* Maintained deterministic workflow logic in application code and required probabilistic model outputs to cross validation boundaries before modifying trusted state.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="AI Evaluation & Production SDLC">
+
+* Translated subjective requirements such as “conduct a good interview” into measurable behaviors including topic coverage, appropriate follow-ups, repetition avoidance, state awareness, and grounded extraction.
+* Combined conventional unit/integration testing with semantic evaluation cases, deterministic checks, secondary LLM verification, and LLM-as-a-judge where requirements could not reasonably be expressed in code.
+* Versioned prompts and model configurations in Langfuse, evaluated behavioral changes before promotion, and turned production failures into regression cases: failure → eval case → fix → evaluate → deploy → monitor.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Observability, Latency & Cost">
+
+* Integrated Langfuse before the first enterprise deployment for execution tracing, prompt versioning, intermediate agent decisions, errors, retries, latency, token usage, and cost.
+* Traced voice latency across speech recognition → orchestration → LLM inference → text-to-speech → network, making slow responses and production failures attributable to individual stages.
+* Used token, latency, and cost telemetry to inform model-routing decisions and explicitly balance quality, responsiveness, and inference cost.
+
+</ProjectDetailSection>
+
+## Outcomes
+
+* Took HaloVision from prototype to three enterprise customers in under three months, with 300+ conversations in the first production month.
+* Built stateful voice agents capable of coherent 30+ minute, multi-topic employee interviews.
+* Replaced general-purpose third-party orchestration with a LangGraph-based architecture designed around the requirements observed in real conversations.
+* Built grounded extraction and organizational analysis using RAG, TF-IDF, BERTopic, embedding similarity, and multi-stage validation.
+* Designed validation and failure boundaries so probabilistic model outputs could safely participate in deterministic application workflows.
+* Established an AI production lifecycle spanning behavioral requirements, automated evaluation, prompt versioning, deployment, tracing, and production regression testing.
+* Integrated production observability for agent behavior, latency, model usage, and cost before the first enterprise deployment.
+
+## Technology
+
+**Python · FastAPI · LangGraph · MCP · RAG · TF-IDF · BERTopic · Deepgram · AssemblyAI · ElevenLabs · Langfuse · Docker · Google Cloud Run · TypeScript, LangFuse**

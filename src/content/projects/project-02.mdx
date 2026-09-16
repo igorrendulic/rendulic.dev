@@ -1,0 +1,117 @@
+---
+title: Cocoon Cam
+description: Senior Backend Engineer at Wearless Tech Inc. August 2018 – August 2019
+role: Senior Backend Engineer
+---
+
+import ProjectDetailSection from '@/components/ProjectDetailSection'
+
+<div className="my-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-y-0">
+  <figure className="min-w-0 sm:row-span-4 sm:grid sm:grid-rows-subgrid">
+    {/* Product image: https://i5.walmartimages.com/seo/Cocoon-Cam-Plus-Wi-Fi-Video-Baby-Monitor_d170ef12-f76c-4fbd-b4ff-a0e5dd886bde.1061e69a8b6e2436a3d8f9b039e68fc1.jpeg */}
+    <img
+      src="/images/projects/cocooncam-plus.jpeg"
+      alt="Cocoon Cam Plus camera beside its mobile app showing live video and a breathing waveform"
+      width={1782}
+      height={1782}
+      className="my-0 h-96 w-full border-2 bg-muted object-contain"
+    />
+    <figcaption className="mt-3 sm:row-span-3 sm:grid sm:grid-rows-subgrid">
+      <div className="font-medium">Cocoon Cam Plus</div>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Contactless breathing monitoring and live video. Product image: Cocoon Cam, via Walmart.
+      </div>
+      <div className="mt-2 flex flex-wrap items-start gap-x-3 gap-y-1 self-start text-sm">
+        <a href="https://www.cnbc.com/2018/06/13/cocoon-cam-review-a-smart-baby-monitor-that-detects-breathing.html" target="_blank" rel="noopener noreferrer">
+          CNBC review (2018)
+        </a>
+        <a href="https://www.forbes.com/sites/mnewlands/2017/08/24/this-stanford-tested-baby-monitor-uses-computer-vision-to-keep-baby-safe/" target="_blank" rel="noopener noreferrer">
+          Forbes (2017)
+        </a>
+      </div>
+    </figcaption>
+  </figure>
+  <figure className="min-w-0 sm:row-span-4 sm:grid sm:grid-rows-subgrid">
+    {/* Wearless Tech app screenshot, discovered via AppAdvice: https://is3-ssl.mzstatic.com/image/thumb/Purple123/v4/4b/e1/2d/4be12d43-c301-b4ef-3c95-24412dbba0ce/mzl.rebhhftx.png/750x750bb.jpeg */}
+    <img
+      src="/images/projects/cocooncam-app.jpg"
+      alt="Cocoon Cam promotional app screenshot showing a movement-intensity overlay on live camera video"
+      width={422}
+      height={750}
+      className="my-0 h-96 w-full border-2 bg-muted object-contain"
+    />
+    <figcaption className="mt-3 sm:row-span-3 sm:grid sm:grid-rows-subgrid">
+      <div className="font-medium">Computer Vision in the Nursery</div>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Breathing and movement analysis without a wearable. App screenshot: Wearless Tech.
+      </div>
+      <div className="mt-2 flex flex-wrap items-start gap-x-3 gap-y-1 self-start text-sm">
+        <a href="https://reallyareyouserious.com/cocoon-cam-plus-review/" target="_blank" rel="noopener noreferrer">
+          Really, Are You Serious? review
+        </a>
+        <a href="https://jacobs.ucsd.edu/news/release/1791?id=1791" target="_blank" rel="noopener noreferrer">
+          UC San Diego
+        </a>
+      </div>
+    </figcaption>
+  </figure>
+</div>
+
+Cocoon Cam was a contactless baby-monitoring platform that used computer vision to detect breathing from live camera video. I led backend engineering at Wearless Tech, scaling the video-processing infrastructure to **15+ PB of live video per month across 50K concurrent camera streams**. The company was later acquired by Alarm.com.
+
+The core engineering challenge was keeping a continuous path from each camera to its inference worker. Every stream needed processing capacity, timely frame delivery, and visibility into its health. At this scale, stream placement and the performance of individual hosts became part of the computer-vision system’s reliability.
+
+## Real-Time Video & ML Inference
+
+I designed the end-to-end pipeline from cameras to **containerized computer-vision workers**, using **Go for video ingestion and Python for ML inference**.
+
+The ingestion and inference layers ran as separate services communicating over **gRPC**, allowing each to be scaled and updated independently. This gave the video backend and the TensorFlow/OpenCV workloads separate deployment boundaries while keeping them connected in the live processing pipeline.
+
+The pipeline also used **TLS-protected Redis to transport per-frame data securely**, routing streams directly to their computer-vision inference workloads. Frame delivery was a continuous production workload: the backend had to keep feeding the workers as cameras streamed and capacity changed.
+
+<ProjectDetailSection title="Custom Orchestration & Stream Placement">
+
+I built a **custom orchestration platform around etcd** to manage stream placement and worker lifecycle.
+
+For this workload, assigning a stream meant choosing where an ongoing inference job would run. The orchestration layer coordinated those assignments and maintained **warm node pools**, keeping capacity ready for incoming streams.
+
+Host selection used **measured performance** to minimize noisy-neighbor effects: a worker sharing infrastructure with other busy workloads could have less usable capacity than its nominal machine specifications suggested.
+
+That made placement an operational decision informed by how hosts actually performed. The goal was to keep long-running video workloads on machines that could sustain their processing needs.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Multi-Region Architecture">
+
+I designed a **multi-region cluster architecture with distance-aware load balancing**, using camera proximity as a factor in routing streams to regional infrastructure.
+
+There were two levels to the placement problem: selecting a region for a camera connection, then selecting a host for the processing workload. Regional routing addressed distance; the custom orchestration layer handled worker placement and capacity within the backend.
+
+Together, these decisions supported tens of thousands of concurrent streams while accounting for both network distance and the performance of the machines running inference.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Stream Health & Production Monitoring">
+
+I built **Prometheus and Grafana monitoring** for the distributed backend, with **automated alerts on stream-health degradation**.
+
+A running service was only one part of the picture. The operational question was whether camera streams were continuing to reach the processing workloads that powered the product.
+
+Monitoring connected the infrastructure view with stream health across regions, giving us visibility into the live pipeline and a way to respond when processing degraded.
+
+</ProjectDetailSection>
+
+## Technology
+
+**Go, Python, gRPC, etcd, Redis, TLS, Docker, TensorFlow, OpenCV, Prometheus, Grafana, DigitalOcean**
+
+## Outcomes
+
+* Scaled the computer-vision backend to process **15+ PB of live video per month across 50K concurrent camera streams**.
+* Built an end-to-end video ingestion and inference pipeline with independently scalable Go and Python services.
+* Delivered custom etcd-based orchestration for stream placement, worker lifecycle, warm capacity, and host selection based on measured performance.
+* Established multi-region routing and stream-health monitoring with automated alerts for production operations.
+
+## Resources & Related Research
+
+* <a href="https://patents.google.com/patent/US10803580B2/en" target="_blank" rel="noopener noreferrer">Video image processing and motion detection</a> — Wearless Tech patent filed in 2018; the public record lists its assignment to Alarm.com in 2020.

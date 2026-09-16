@@ -1,0 +1,17 @@
+.halo-vision-diagram .halo-conversation-flow {
+  animation: halo-conversation-flow 5s linear infinite;
+}
+
+.halo-vision-diagram[data-paused='true'] .halo-conversation-flow {
+  animation-play-state: paused;
+}
+
+@keyframes halo-conversation-flow {
+  to { stroke-dashoffset: -40; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halo-vision-diagram .halo-conversation-flow {
+    animation: none;
+  }
+}

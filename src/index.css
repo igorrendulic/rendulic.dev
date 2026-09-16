@@ -7,31 +7,37 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--foreground);
-  --color-primary-hover: #ffd12e;
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
   --color-secondary: #000;
   --color-secondary-foreground: #fff;
   --color-secondary-hover: #262626;
   --color-muted: #efe7d8;
-  --color-muted-foreground: #57534e;
-  --color-accent: #e2e8d7;
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: #b91c1c;
   --color-destructive-foreground: #fff;
-  --color-border: #000;
-  --color-ring: #000;
+  --color-border: var(--foreground);
+  --color-ring: var(--foreground);
   --radius-sm: 0;
   --radius-md: 0;
   --radius-lg: 0;
   --radius: 0;
-  --shadow-sm: 2px 2px 0 0 #000;
-  --shadow-md: 4px 4px 0 0 #000;
-  --shadow-lg: 6px 6px 0 0 #000;
+  --shadow-sm: 2px 2px 0 0 var(--foreground);
+  --shadow-md: 4px 4px 0 0 var(--foreground);
+  --shadow-lg: 6px 6px 0 0 var(--foreground);
 }
 
 :root {
   --background: #fff7e8;
   --foreground: #000;
-  --primary: #ffdc58;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --primary-hover: #262626;
+  --accent: #ffdc58;
+  --accent-foreground: #000;
+  --muted-foreground: #57534e;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -40,17 +46,31 @@
 @layer base {
   * { border-color: var(--color-border); }
   body { @apply m-0 min-w-80 bg-background font-sans text-foreground; }
-  ::selection { @apply bg-primary text-foreground; }
+  ::selection { @apply bg-primary text-primary-foreground; }
   :focus-visible { outline: 3px solid currentColor; outline-offset: 5px; }
+  /* Fragment destinations receive focus for navigation, without a section-sized ring. */
+  :is(main, section)[tabindex="-1"]:focus { outline: none; }
   section { scroll-margin-top: 2rem; }
 }
 
 @layer components {
-  .prose { @apply max-w-2xl text-lg leading-relaxed; }
-  .prose p + p { @apply mt-4; }
+  .prose { @apply min-w-0 max-w-2xl text-lg leading-relaxed; overflow-wrap: anywhere; }
+  .prose p { @apply my-4; }
+  .prose h2 { @apply mt-10 mb-4 font-head text-3xl tracking-tight; }
   .prose h3 { @apply mt-8 mb-3 text-2xl font-bold; }
+  .prose h4 { @apply mt-6 mb-3 text-xl font-bold; }
+  .prose h5, .prose h6 { @apply mt-6 mb-3 text-lg font-bold; }
   .prose a { @apply underline decoration-2 underline-offset-4; }
   .prose ul { @apply my-4 list-disc pl-6; }
+  .prose ol { @apply my-4 list-decimal pl-6; }
+  .prose li + li { @apply mt-2; }
+  .prose img { @apply my-6 block h-auto max-w-full border-2; }
+  .prose blockquote { @apply my-6 border-l-4 bg-muted px-5 py-1; }
+  .prose pre { @apply my-6 max-w-full overflow-x-auto border-2 bg-muted p-4 text-sm leading-relaxed; }
+  .prose code { @apply font-mono text-sm; }
+  .prose :not(pre) > code { @apply border bg-muted px-1 py-0.5; }
+  .prose pre code { overflow-wrap: normal; }
+  .prose hr { @apply my-8 border-t-2; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,153 @@
+---
+title: Food Lens AI
+description: Senior AI Engineer at Azumio Inc. September 2021 – January 2025
+role: AI/ML Engineer
+---
+
+import ProjectDetailSection from '@/components/ProjectDetailSection'
+
+<div className="my-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-y-0">
+  <figure className="min-w-0 sm:row-span-4 sm:grid sm:grid-rows-subgrid">
+    <img
+      src="/images/projects/food_recognition.png"
+      alt="Food Lens food recognition interface identifying pasta and meatballs with nutrition information"
+      width={676}
+      height={1365}
+      className="my-0 h-96 w-full border-2 bg-muted object-contain"
+    />
+    <figcaption className="mt-3 sm:row-span-3 sm:grid sm:grid-rows-subgrid">
+      <div className="font-medium">Food Lens AI</div>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Food recognition and nutrition analysis API powering applications and integrations.
+      </div>
+      <div className="mt-2 flex flex-wrap items-start gap-x-3 gap-y-1 self-start text-sm">
+        <a
+          href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9834938/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Product overview
+        </a>
+        <a
+          href="https://formative.jmir.org/2020/12/e15602"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          JMIR: CalorieMama API evaluation (2020)
+        </a>
+      </div>
+    </figcaption>
+  </figure>
+  <figure className="min-w-0 sm:row-span-4 sm:grid sm:grid-rows-subgrid">
+    {/* Official screenshot: https://www.caloriemama.ai/img/phone1b.jpg */}
+    <img
+      src="/images/projects/caloriemama.jpg"
+      alt="CalorieMama app showing a salad in its food camera and suggested food matches"
+      width={532}
+      height={598}
+      className="my-0 h-96 w-full border-2 bg-muted object-contain"
+    />
+    <figcaption className="mt-3 sm:row-span-3 sm:grid sm:grid-rows-subgrid">
+      <div className="font-medium">CalorieMama</div>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Photo-based food logging and nutrition tracking powered by Food Lens AI.
+      </div>
+      <div className="mt-2 flex flex-wrap items-start gap-x-3 gap-y-1 self-start text-sm">
+        <a
+          href="https://www.techtimes.com/articles/200757/20170308/calorie-mama-nutrition-app-uses-photo-recognition-ai-track-food.htm"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Tech Times (2017)
+        </a>
+        <a
+          href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8617678/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Nutrients: restaurant nutrition study (2021)
+        </a>
+      </div>
+    </figcaption>
+  </figure>
+</div>
+
+Food Lens AI was a large scale production food-recognition and nutrition platform. I owned the backend and ML infrastructure behind the system, operating at **50+ requests per second with &lt;300 ms inference latency**.
+
+Pipeline cleanup of 20M+ images, 1M+ indexed products, 50+ req/s , &lt; 300 ms inference latency
+
+The interesting challenge was not simply improving the recognition model. It was building the data pipelines, retrieval architecture, evaluation systems, and production infrastructure required to make computer-vision-based food recognition work reliably at scale.
+
+
+## Packaged-Goods Recognition
+
+Food-on-a-plate recognition and packaged-product recognition are fundamentally different problems. The existing CNN-based system worked well for visual food categories, but packaged goods have enormous variation and often need to resolve to a specific commercial product and its corresponding nutritional data.
+
+There was also no usable packaged-goods image corpus at the scale we needed.
+
+I built the pipeline end-to-end, starting with **20M+ product images** collected through large-scale scraping and ingestion pipelines. Images went through **OpenCV-based preprocessing, deduplication, and automated quality checks**, reducing the raw corpus to over **1M production-ready products**.  
+
+Barcode and QR extraction connected recognized products with structured nutritional databases. For cases that could not be resolved automatically, I built an **OCR and LLM-assisted administration workflow** for extracting, retrieving, and validating product labels and nutritional information. 
+
+Millions of **Transformer-based embeddings** were generated using GPU-enabled Apache Beam/Dataflow workers and used to power the production retrieval system.
+
+<ProjectDetailSection title="Low-Latency Vector Retrieval">
+
+Serving millions of embeddings with production latency requirements presented a separate engineering problem.
+
+I built a **two-tier retrieval architecture**. Frequently queried products were kept in a GPU-resident hot-item index, while **Vertex AI Vector Search** provided retrieval across the complete product corpus.  
+
+For the hot path, I optimized vector search using **compiled PyTorch kernels, precomputed vector norms, and batched L2 distance calculations**, minimizing both computation and data movement during inference. 
+
+This retrieval system ran alongside the existing CNN classifier: classification for food-on-a-plate recognition and embedding-based retrieval for packaged products.
+
+The split was deliberate. Trying to force both problems through the same recognition architecture would have compromised either latency, accuracy, or both.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Nutrition Search & RAG">
+
+Nutrition lookup presented a different retrieval problem.
+
+Traditional keyword search becomes increasingly poor as the food database grows. A query such as “apple” may match hundreds of vendor products and database entries, while the user actually needs meaningful concepts such as red apple, green apple, or Fuji apple.
+
+I built a **RAG-based nutritional search system** over **USDA FoodData Central and NutritionX**. The system combined **dense and sparse retrieval over chunked documents, re-ranking, and LLM generation** to answer detailed macro- and micronutrient questions rather than simply returning raw database matches.
+
+The result was a retrieval layer combining structured nutritional databases, semantic and lexical search, re-ranking, and generative extraction instead of relying on any one technique exclusively.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Evaluation & Production Reliability">
+
+As the corpus continuously expanded and product labels evolved, retrieval quality could regress without any obvious failure in the serving infrastructure.
+
+I built a **regression and observability system around curated golden datasets** to detect changes in retrieval quality and embedding behavior as new food and packaged-goods data entered production. 
+
+This gave us a repeatable way to evaluate changes to embeddings, retrieval logic, and the underlying corpus before they affected production results.
+
+</ProjectDetailSection>
+
+## Production & Integrations
+
+Food Lens AI powered consumer applications and was also exposed as an API for external products.
+
+The technology was integrated with **Samsung Bixby** and the Food Recognition API was licensed to enterprise partners, including **Helix**, where food recognition was used as part of DNA-based meal personalization.
+
+## Technology
+
+**Python, PyTorch, HuggingFace Transformers, OpenAI, Vertex AI Vector Search, OpenCV, FastAPI, Apache Beam / Dataflow, Kubernetes, Docker, Cloud Run, GPU inference**
+
+## Outcomes
+
+* Scaled packaged-goods recognition from no usable corpus to 3M+ production-ready products, derived from more than 20M collected images.
+* Served production food recognition at 20+ req/s with &lt;300 ms inference latency while combining CNN classification and large-scale vector retrieval.
+* Expanded Food Lens AI beyond visual classification into product and nutritional retrieval, supporting both packaged goods and detailed macro/micronutrient queries.
+* Shipped the technology into consumer and B2B products, including Samsung Bixby and enterprise integrations such as Helix.
+* Established regression testing for a continuously evolving ML corpus, allowing new products, labels, embeddings, and retrieval changes to be evaluated against curated golden datasets before production.
+
+- <a href="https://thespoon.tech/samsung-adds-food-image-recognition-to-bixby-through-calorie-mama-api/" target="_blank" rel="noopener noreferrer">Samsung adds food image recognition to Bixby through CalorieMama API</a>
+- <a href="https://www.sportsbusinessjournal.com/Daily/Issues/2017/08/20/Technology/fitness-app-dna-food-image-recognition/" target="_blank" rel="noopener noreferrer">Fitness app DNA food image recognition</a>
+
+
+
+

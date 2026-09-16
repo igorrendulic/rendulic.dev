@@ -1,0 +1,58 @@
+---
+title: medGateway — eHealth Research & Development
+description: SRC Infonet / SRC.SI d.o.o., 2008–2014
+role: R&D Engineer / Consultant
+---
+
+<figure className="my-8 min-w-0">
+  <a href="/images/projects/medgateway-network-en.png" target="_blank" rel="noopener noreferrer" aria-label="Open the English medGateway network diagram at full size in a new tab">
+    <img
+      src="/images/projects/medgateway-network-en.png"
+      alt="English diagram of the newborn-screening network: medGateway connects external hospitals with UMC Ljubljana’s KISLD and KNM laboratories, which also connect to three clinical departments within UMC Ljubljana."
+      width={2019}
+      height={779}
+      decoding="async"
+      className="my-0 h-auto w-full bg-white"
+    />
+  </a>
+  <figcaption className="mt-3 text-sm text-muted-foreground">
+    <p className="my-0">
+      medGateway in Slovenia’s newborn-screening network, documented in 2021, after my involvement.
+      English translation of Figure 1 by Žiga Iztok Remec and Ana Marija Jelovšek in <a href="https://www.laboratorijska-medicina.si/si/prispevki/clanek/informacijske-resitve-pri-implementaciji-razsirjenega-presejalnega-testiranja-novorojencev-v-sloveniji">Laboratorijska medicina</a>.
+      {" "}<a href="/images/projects/medgateway-network-en.png" target="_blank" rel="noopener noreferrer">View full-size English diagram</a> · <a href="https://www.laboratorijska-medicina.si/assets/images/upload/Clanki/0307/7-1.png" target="_blank" rel="noopener noreferrer">Slovenian original</a>.
+    </p>
+    <p className="mb-0 mt-2">
+      UMC: University Medical Centre. KISLD: Clinical Institute of Special Laboratory Diagnostics. KNM: Clinic of Nuclear Medicine.
+    </p>
+  </figcaption>
+</figure>
+
+I proposed and prototyped medGateway, a privacy-preserving HL7 document exchange platform, and took it through productization and deployment within Slovenia’s national e-health ecosystem.
+
+## Overview
+
+medGateway started with an internal email challenge while I was a developer at SRC.SI: how could hospitals, insurance companies, and other institutions exchange documents without collecting them centrally? The brief reflected the legal constraint we were working under in Slovenia at the time: health documents had to remain on hospital premises.
+
+I proposed a document router that knew where a document came from and where it needed to go, without needing to read or understand its contents. This became the basis for medGateway, enabling medical record exchange between healthcare and government systems without persisting patient data outside the originating or destination institution.
+
+I worked as an R&D Engineer at SRC Infonet in Ljubljana, Slovenia, from 2008 to 2012. My engineering and consulting work across SRC Infonet and SRC.SI d.o.o. spanned 2008–2014.
+
+## Engineering approach
+
+I designed a proxy-based, stateless routing architecture that separated routing information from document contents. The router used source and destination information to move HL7 medical documents between institutions, with digital signatures and encryption supporting secure exchange.
+
+My original design focused on routing documents between institutions using digital signatures and encryption, with the goal of exchanging medical records without collecting them in a central repository.
+
+## Technologies
+
+Java, Hibernate.
+
+## Outcomes
+
+I took medGateway from a proposed solution and prototype to a product deployed within Slovenia’s national e-health ecosystem. Following SRC.SI’s acquisition of Infonet, I continued supporting the platform as a consultant for SRC.SI for four years.
+
+The platform continued to support healthcare infrastructure beyond my 2008–2014 involvement. Published accounts document its use for:
+
+- **Referrals and prescriptions:** medGateway carried referral and prescription data between healthcare systems before its later adoption for laboratory workflows. [Clinical implementation report, 2021](https://www.laboratorijska-medicina.si/si/prispevki/clanek/informacijske-resitve-pri-implementaciji-razsirjenega-presejalnega-testiranja-novorojencev-v-sloveniji).
+- **National newborn screening:** medGateway supported electronic orders and results in Slovenia’s expanded screening programme, introduced in 2018. The programme connected all 14 maternity wards and two clinical departments with two laboratories at University Medical Centre Ljubljana, integrating four different hospital information systems and handling approximately 20,000 screening samples annually. [Newborn-screening study, 2021](https://www.laboratorijska-medicina.si/si/prispevki/clanek/informacijske-resitve-pri-implementaciji-razsirjenega-presejalnega-testiranja-novorojencev-v-sloveniji).
+- **Microbiology and COVID testing:** an electronic ordering module developed by SRC Infonet and the National Laboratory of Health, Environment and Food (NLZOH) used medGateway to exchange test orders and results. Slovenia’s National Institute of Public Health reported adoption by nine hospitals and more than 50 connections established as the module expanded to COVID testing sites. [Public Health Achievements in Slovenia, p. 118](https://nijz.si/wp-content/uploads/2022/07/e-publication_public_health_eng.pdf#page=119).

@@ -1,0 +1,73 @@
+---
+title: Mailio
+description: Founder at Mailio Labs LLC. December 2025 – August 2026
+role: Founder
+---
+
+import ProjectDetailSection from '@/components/ProjectDetailSection'
+
+I founded Mailio Labs and built, launched, and operated **Mailio, a secure email provider with user-owned encryption keys**. The platform grew to **100K+ registered users and 8K+ monthly active users**.
+
+My work spanned identity and key protection, hybrid email retrieval, sender trust, fraud detection, migration infrastructure, and peer-to-peer payments. These systems connected the core email experience with explicit controls over account access, sender approval, and payment authorization.
+
+<a href="https://github.com/mailio" target="_blank" rel="noopener noreferrer">Mailio repositories on GitHub</a>
+
+## Identity & User-Owned Keys
+
+I implemented **tenant isolation, passkey-based authentication backed by device biometrics, authorization controls, and OIDC-based identity flows**.
+
+User-controlled cryptographic keys were central to the product. I used **Shamir Secret Sharing to protect access to those keys**, alongside the authentication and authorization systems governing account access.
+
+<ProjectDetailSection title="Hybrid Email Retrieval">
+
+I built hybrid retrieval for email content using **BM25, embeddings, vector search, and re-ranking** across **locally encrypted user content and server-side SMTP data**.
+
+The retrieval system combined lexical and semantic search, with re-ranking to refine the results. I used **Pinecone namespaces for tenant-isolated vector storage**, carrying the platform’s tenant boundaries into the search infrastructure.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Signed Handshakes & Sender Reputation">
+
+I designed a **cryptographically signed email handshake system** that introduced **explicit sender approval** into the email experience.
+
+The system also incorporated **reputation signals derived from recipient engagement**, connecting sender reputation to how recipients interacted with their email.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Fraud Detection & Deliverability">
+
+I built and deployed an **XGBoost fraud-detection model**, reaching **0.82 F1 and 0.75 recall**.
+
+The model helped protect sender reputation and email deliverability, making fraud detection part of operating the email service.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Legacy Platform Migration">
+
+I built **asynchronous queue and worker based migration pipelines** to transfer users and data from the legacy Mailio platform.
+
+The pipelines handled long-running migration jobs through **background processing, retries, and failure recovery**. This made migration an operational workload with explicit recovery paths when individual jobs failed.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="USDC Payments & Cross-Chain Settlement">
+
+I built **end-to-end USDC peer-to-peer payment flows between Mailio users**, using **cryptographic signatures and handshake-based trust controls** to verify counterparties and authorize transfers.
+
+I also implemented **cross-chain value movement across Base and Polygon**, including **international USDC-to-fiat settlement flows to EU bank accounts**.
+
+This extended the handshake model into payments, where verifying the counterparty and authorizing the transfer were explicit parts of the flow.
+
+</ProjectDetailSection>
+
+## Technology
+
+**Go, Python, FastAPI, HuggingFace Transformers, Pinecone, XGBoost, Prometheus, Grafana, AWS**
+
+## Outcomes
+
+* Built, launched, and operated a secure email provider that grew to **100K+ registered users and 8K+ monthly active users**.
+* Delivered user-owned key protection, passkey authentication, tenant isolation, and hybrid email retrieval.
+* Introduced signed sender handshakes and engagement-based reputation signals, alongside a deployed fraud-detection model reaching **0.82 F1 and 0.75 recall**.
+* Built legacy migration pipelines with background workers, retries, and failure recovery.
+* Delivered USDC payments between Mailio users, cross-chain value movement across Base and Polygon, and settlement flows to EU bank accounts.

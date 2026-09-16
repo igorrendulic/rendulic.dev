@@ -1,0 +1,286 @@
+---
+title: Azumio Health & Fitness Platform 
+description: Backend, data, and ML infrastructure powering consumer health applications used by tens of millions of users.
+role: Senior Backend & Data Engineer
+---
+
+import ProjectDetailSection from '@/components/ProjectDetailSection'
+
+<div className="my-8 grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-y-0">
+  <figure className="min-w-0 sm:row-span-4 sm:grid sm:grid-rows-subgrid">
+    <img
+      src="/images/projects/argus.jpg"
+      alt="Argus health and activity tracking app"
+      width={420}
+      height={840}
+      className="my-0 h-96 w-full border-2 bg-muted object-contain"
+    />
+    <figcaption className="mt-3 sm:row-span-3 sm:grid sm:grid-rows-subgrid">
+      <div className="font-medium">Argus</div>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Activity, fitness, nutrition, sleep, and social health platform.
+      </div>
+      <div className="mt-2 flex flex-wrap items-start gap-x-3 gap-y-1 self-start text-sm">
+        <a
+          href="https://techcrunch.com/2013/07/03/azumio-argus/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          TechCrunch
+        </a>
+        <a
+          href="https://www.engadget.com/2013-10-01-daily-iphone-app-argus-fitness-app-uses-the-m7-to-track-your-st.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Engadget
+        </a>
+      </div>
+    </figcaption>
+  </figure>
+  <figure className="min-w-0 sm:row-span-4 sm:grid sm:grid-rows-subgrid">
+    <img
+      src="/images/projects/sleeptime.png"
+      alt="Sleep Time sleep tracking app"
+      width={420}
+      height={840}
+      className="my-0 h-96 w-full border-2 bg-muted object-contain"
+    />
+    <figcaption className="mt-3 sm:row-span-3 sm:grid sm:grid-rows-subgrid">
+      <div className="font-medium">Sleep Time</div>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Sleep tracking, sleep analysis, and smart alarm.
+      </div>
+      <div className="mt-2 flex flex-wrap items-start gap-x-3 gap-y-1 self-start text-sm">
+        <a
+          href="https://azumio.com/apps/sleep-time/overview"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Product
+        </a>
+        <a
+          href="https://www.clinicaladvisor.com/features/are-smartphone-apps-helpful-for-sleep/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Clinical evaluation
+        </a>
+      </div>
+    </figcaption>
+  </figure>
+
+  <figure className="min-w-0 sm:row-span-4 sm:grid sm:grid-rows-subgrid">
+    <img
+      src="/images/projects/glucose_buddy.png"
+      alt="Glucose Buddy diabetes and glucose tracking app"
+      width={420}
+      height={840}
+      className="my-0 h-96 w-full border-2 bg-muted object-contain"
+    />
+    <figcaption className="mt-3 sm:row-span-3 sm:grid sm:grid-rows-subgrid">
+      <div className="font-medium">Glucose Buddy</div>
+      <div className="mt-1 text-sm text-muted-foreground">
+        Diabetes, glucose, medication, and health tracking.
+      </div>
+      <div className="mt-2 flex flex-wrap items-start gap-x-3 gap-y-1 self-start text-sm">
+        <a
+          href="https://www.jmir.org/2013/11/e235/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Clinical study
+        </a>
+        <a
+          href="https://www.imedicalapps.com/2013/05/glucose-buddy-journal-app-android/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Review
+        </a>
+      </div>
+    </figcaption>
+  </figure>
+</div>
+
+Azumio operated a portfolio of consumer health applications spanning activity tracking, sleep, nutrition, running, glucose management, and social fitness, with **tens of millions of users across the platform**.  
+
+I worked across the backend and data infrastructure behind these applications: API and data-model design, scaling Google Cloud Datastore, evolving a shared monolithic backend into application-specific services, migrating legacy systems, building analytics pipelines, supporting real-time application features, and preparing large datasets for machine learning and academic research.
+
+The production platform handled **1K+ requests per second with sub-300 ms latency**.   
+
+## Backend Architecture
+
+The core backend was built in **Java** on **Google Cloud** and served multiple mobile applications from a shared platform. 
+
+<ProjectDetailSection title="Datastore and data modeling">
+
+Much of the operational data was stored in **Google Cloud Datastore**, including biometric measurements, activity, nutrition, application state, and social data. 
+
+Health data evolves continuously as products add measurements, devices, integrations, and features. Datastore’s flexible entity model allowed these structures to evolve without making relational schema migrations a prerequisite for every product change.
+
+At production scale, however, Datastore’s indexing model made query design and data modeling closely related. I worked on **index optimization and access patterns**, removing unnecessary indexes and structuring queries around the application’s actual read and write patterns.
+
+This was particularly important for high-volume data such as activity measurements, where indexing decisions affected write amplification, storage, latency, and cost.
+
+Large binary and generated assets were kept in **Google Cloud Storage**, separating object storage from transactional application data.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Migrating Glucose Buddy">
+
+Glucose Buddy predated much of the shared Azumio platform and ran on a legacy SQL-based backend.
+
+I worked on migrating its backend functionality and existing data onto the newer infrastructure used by Azumio’s applications.
+
+This required translating an established relational data model into the platform’s Datastore-oriented architecture while preserving existing application behavior and user data. Because the application was already deployed, the migration had to maintain compatibility with existing mobile clients rather than treating the new backend as a greenfield system.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="API design">
+
+The backend APIs served mobile applications with a large installed user base. Unlike web clients, deployed mobile applications could remain in use long after a newer version had been released.
+
+API design therefore emphasized **backward compatibility and incremental evolution**. Backend changes needed to coexist with multiple generations of clients, and new functionality generally had to be introduced without breaking existing application behavior.
+
+API contracts were kept separate from the underlying persistence representation so that Datastore entities and backend implementations could evolve without exposing those changes directly to mobile clients.
+
+For high-volume endpoints, API and persistence design were considered together. Common request paths were designed to minimize datastore operations and avoid expensive query patterns, with latency-sensitive work kept on the synchronous request path and other processing separated where possible.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Mobile synchronization">
+
+Health applications continuously generate data from multiple sources. Measurements and activity could originate on a mobile device, from external health providers, or from backend processing, while application and social state could change on the server.
+
+I worked on **bidirectional synchronization between mobile applications and backend systems**, maintaining consistent application state while supporting clients running different application versions.
+
+One operational issue was synchronized client behavior. Large numbers of devices tended to upload accumulated health and activity data around similar local-time boundaries, particularly around midnight. With users concentrated in the same time zones, this could create sharp regional traffic spikes — for example, a large West Coast population beginning synchronization at roughly the same time.
+
+I helped change the synchronization strategy to **spread client uploads over a bounded time window rather than synchronizing immediately at the boundary**. Clients introduced a randomized delay of roughly 0–20 minutes, smoothing the arrival rate without materially affecting the freshness of health data.
+
+The trade-off was intentional: for accumulated activity data, a few minutes of additional synchronization latency had little product impact, while avoiding a synchronized burst substantially reduced peak backend load and made infrastructure demand more predictable.
+
+The synchronization layer supported data including steps, sleep, glucose measurements, nutrition, workouts, challenges, and other application state.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Social platform">
+
+I implemented backend functionality for a newsfeed with comments and likes, adding a social layer to the health and fitness platform.
+
+The system needed to represent feeds, interactions, and user-generated content while operating on the same infrastructure serving high-volume health data.
+
+This work included the backend APIs and data models required for publishing content, retrieving feeds, commenting, and tracking social interactions.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Data pipelines and analytics">
+
+Production Datastore was designed around application access patterns rather than large analytical scans.
+
+I built **event-ingestion pipelines into BigQuery**, creating a separate analytical layer for understanding user behavior across the applications. 
+
+This separation allowed the two systems to be optimized for different workloads:
+- Datastore -> low-latency operational access
+- BigQuery -> high-volume analytics
+
+The resulting datasets covered hundreds of millions of records and supported product analytics, behavioral analysis, experimentation, and downstream data science.
+
+I worked on analytics involving **steps, sleep, glucose, and application usage**, using behavioral and biometric data to understand how users interacted with the products and how health metrics changed over time.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="ML Data and Labeling">
+
+Production data also provided the foundation for machine-learning development.
+
+I built internal tools for **extracting, preparing, and labeling ML training data**, helping turn large collections of production data into datasets suitable for supervised model development.
+
+The workflow connected several otherwise separate stages:
+
+**Production data → candidate extraction → human labeling → training datasets → ML development**
+
+The important engineering problem was not simply exporting records. Data had to be selected and transformed into useful training examples, presented in a form that could be efficiently annotated, and converted into consistent datasets for model development.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="External health-data integrations">
+
+Azumio’s applications existed within a broader ecosystem of health, fitness, nutrition, and medical-data providers.
+
+I worked on numerous external integrations, including **Nutritionix, USDA food databases, Dexcom, Fitbit**, and other providers.
+
+Each system exposed different APIs, authentication mechanisms, identifiers, units, schemas, update frequencies, and synchronization behavior.
+
+The backend integration layer normalized those external representations into Azumio’s internal models so that application code and analytics systems could operate on consistent health and nutrition data rather than implementing provider-specific logic throughout the platform.
+
+</ProjectDetailSection>
+
+<ProjectDetailSection title="Research data infrastructure">
+
+The scale of the platform also made its datasets useful for population-level health research.
+
+I worked on extracting and preparing **anonymized datasets for external researchers, including researchers at Stanford University**.  
+
+Research datasets were separated from the production serving path, allowing large analytical workloads to operate on prepared datasets rather than directly against systems serving mobile applications.
+
+This work contributed data infrastructure supporting research into physical activity, obesity, activity inequality, and relationships between human behavior and the built environment.
+
+</ProjectDetailSection>
+
+### Links
+- <a href="https://www.nature.com/articles/s41586-025-09321-3" target="_blank" rel="noopener noreferrer">Physical activity and obesity in the United States</a>
+- <a href="https://news.stanford.edu/stories/2017/07/stanford-researchers-find-intriguing-clues-obesity-counting-steps-via-smartphones" target="_blank" rel="noopener noreferrer">Stanford researchers find intriguing clues about obesity counting steps via smartphones</a>
+
+
+<ProjectDetailSection title="Research">
+
+At Azumio, I also worked on research into estimating food volume using 3D point clouds. The work explored how three-dimensional representations of food could support portion-size assessment, moving beyond identifying what food is present to estimating how much there is.
+
+The video below shows an example from this research.
+
+<figure className="my-6">
+  <video
+    controls
+    playsInline
+    preload="none"
+    poster="/images/projects/azumio-food-volume-research.jpg"
+    width={720}
+    height={1280}
+    aria-label="Food-volume assessment research demo"
+    aria-describedby="azumio-research-caption azumio-research-description"
+    className="block h-auto max-h-[70svh] w-auto max-w-full border-2 bg-black object-contain"
+  >
+    <source src="/videos/projects/azumio-food-volume-research.mp4" type="video/mp4" />
+    Your browser does not support embedded video. Use the research demo link below to watch it.
+  </video>
+  <figcaption id="azumio-research-caption" className="mt-3 text-sm text-muted-foreground">
+    Food-volume assessment research at Azumio.
+  </figcaption>
+</figure>
+
+<p id="azumio-research-description" className="text-sm text-muted-foreground">
+  In the demo, a handheld device views food on a plate with a 3D overlay, then displays the captured scene as a point cloud.
+</p>
+
+</ProjectDetailSection>
+
+<a href="/videos/projects/azumio-food-volume-research.mp4">Watch the research demo</a>
+
+## Outcomes
+
+Across this work, I helped build and evolve backend and data systems supporting:
+-  **Tens of millions of users** across multiple consumer health applications  
+-  **1K+ requests per second** with sub-300 ms latency
+-  Operational health and activity data at large production scale 
+-  BigQuery analytics across **hundreds of millions of records** 
+-  Bidirectional synchronization between mobile and backend systems
+-  Real-time activity, running, and challenge features
+-  Social feeds, comments, and likes 
+-  Analytics across steps, sleep, glucose, and user behavior 
+-  ML training-data extraction and labeling workflows 
+-  Research datasets used by **Stanford and other researchers**
+-  Integrations across nutrition, fitness, glucose, and health-data providers 
+-  Migration of Glucose Buddy from its legacy SQL architecture 
+-  Separation of shared infrastructure into independently transferable application backends

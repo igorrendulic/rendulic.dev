@@ -1,0 +1,98 @@
+---
+title: Chrysalis Cloud
+description: Building a platform for edge AI and selective cloud video analysis, designed for 50K concurrent live streams at up to 60× lower infrastructure cost than AWS Kinesis on equivalent workloads.
+role: Director of Engineering
+---
+
+<figure className="my-8 min-w-0">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/bWCgTW2Ar5s"
+    title="Chrysalis Cloud demo video"
+    width={1280}
+    height={720}
+    className="my-0 aspect-video h-auto w-full border-2 bg-muted"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerPolicy="strict-origin-when-cross-origin"
+    allowFullScreen
+  />
+  <figcaption className="mt-3">
+    <div className="font-medium">Chrysalis Cloud Demo</div>
+    <div className="mt-2 text-sm">
+      <a
+        href="https://www.youtube.com/watch?v=bWCgTW2Ar5s"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Watch on YouTube
+      </a>
+    </div>
+  </figcaption>
+</figure>
+
+**Director of Engineering · August 2019 – September 2021**
+
+Chrysalis Cloud was a platform for developers deploying AI close to cameras while selectively streaming video to the cloud for further analysis. The goal was to make edge and cloud inference work together: run models near the source, keep bandwidth and cloud processing costs low, and manage the system centrally.
+
+I built the engineering team and led the architecture and hands-on delivery of the platform in **six months**. We designed the distributed video-streaming and ML inference framework to support **50K concurrent live streams**, with cost as a core architectural constraint.
+
+## Making Video Infrastructure Economically Viable
+
+The existing AWS Kinesis-based approach was prohibitively expensive at the scale we needed. Replacing it meant building a system that could sustain continuous video ingestion and inference without sacrificing reliability.
+
+There were two parts to the cost problem. The cloud ingestion path needed to become substantially cheaper, and developers needed a way to process video at the edge instead of sending every workload to the cloud.
+
+Together, these requirements shaped the platform: a distributed streaming backend, a hybrid inference architecture, and a centralized control plane for operating both.
+
+## Distributed Video Ingestion
+
+I built the core video ingestion service in **Go using gRPC and Redis**. I also wrote a **custom orchestration layer on etcd** for service discovery, workload placement, and cluster coordination.
+
+Orchestration was part of the streaming architecture. The platform needed to track cluster state and coordinate where workloads ran across the available infrastructure. The etcd-based layer handled that coordination, while the ingestion services handled the live video path.
+
+I used **Terraform** to define and provision infrastructure throughout the system. On equivalent workloads, the architecture achieved **up to 60× lower infrastructure cost than the AWS Kinesis-based approach**—roughly one-sixtieth of the cost at the upper end of the comparison.
+
+## Inference Near the Camera
+
+The hybrid edge/cloud architecture pushed inference as close to the camera as possible. Developers could deploy models to edge nodes and selectively stream video for cloud analysis, reducing the bandwidth and cloud compute required for their applications.
+
+I integrated **Google IoT Core** for device management and over-the-air updates during this period. A centralized control plane deployed inference modules to edge nodes through **remote Docker container updates**, allowing us to manage containerized workloads across distributed devices.
+
+This made deployment and operations part of the developer platform. Running a model at the edge also meant being able to update it remotely and understand what was happening across devices, streams, and inference workloads.
+
+## Visibility Across Edge and Cloud
+
+I built real-time telemetry and event-processing pipelines using **Google Pub/Sub and Redis**, with **Prometheus and Grafana** for monitoring.
+
+These pipelines tracked stream health, edge devices, and inference workloads in production. A custom monitoring interface supported **cluster-wide anomaly detection**, connecting the distributed infrastructure to a central operational view.
+
+Keeping inference near the camera reduced cloud work, but it also spread execution across more locations. Central observability was essential to operating that architecture as one platform.
+
+## Outcomes
+
+* Built the engineering team and delivered the distributed streaming and inference platform in **six months**.
+* Designed the framework to support **50K concurrent live streams**.
+* Achieved **up to 60× lower infrastructure cost** than the AWS Kinesis-based approach on equivalent workloads.
+* Enabled developers to deploy containerized inference to edge nodes and selectively stream video for cloud analysis.
+* Established centralized device management, remote updates, and production telemetry across edge and cloud workloads.
+
+## Technology
+
+**Go, gRPC, Redis, etcd, Google Pub/Sub, Google IoT Core, Docker, Terraform, Google Cloud, Prometheus, Grafana**
+
+## Open Source
+
+<a
+  href="https://github.com/igorrendulic/video-edge-ai-proxy"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-3"
+>
+  <span className="break-all">video-edge-ai-proxy on GitHub</span>
+  <img
+    src="https://img.shields.io/github/stars/igorrendulic/video-edge-ai-proxy?style=flat-square&logo=github&label=%E2%98%85%20stars"
+    alt="GitHub star count for video-edge-ai-proxy"
+    height={20}
+    loading="lazy"
+    className="my-0 h-5 w-auto"
+  />
+</a>
