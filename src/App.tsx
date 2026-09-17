@@ -2,6 +2,8 @@ import { getCalApi } from '@calcom/embed-react'
 import { useEffect, useLayoutEffect, type ReactNode } from 'react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import ProjectPage from '@/components/ProjectPage'
+import BlogPage from '@/components/BlogPage'
+import BlogIndexPage from '@/components/BlogIndexPage'
 import About from '@/content/about.mdx'
 import Expertise from '@/content/expertise.mdx'
 import Intro from '@/content/intro.mdx'
@@ -28,12 +30,18 @@ function Section({ id, number, title, children }: {
 
 export default function App() {
   const pathname = window.location.pathname
-  const isAbout = pathname === '/about.html'
+  const isAbout = pathname === '/about' || pathname === '/about.html'
+  const isBlog = pathname === '/blog' || pathname === '/blog/' || pathname === '/blog/index.html'
   const isHome = pathname === '/' || pathname === '/index.html'
   const project = projects.find(({ slug }) => (
     pathname === `/projects/${slug}` ||
     pathname === `/projects/${slug}/` ||
     pathname === `/projects/${slug}/index.html`
+  ))
+  const post = posts.find(({ slug }) => (
+    pathname === `/blog/${slug}` ||
+    pathname === `/blog/${slug}/` ||
+    pathname === `/blog/${slug}/index.html`
   ))
 
   useEffect(() => {
@@ -67,13 +75,13 @@ export default function App() {
           </a>
           <nav aria-label="Main navigation" className="flex w-full flex-wrap gap-x-5 sm:w-auto sm:gap-x-6">
             {site.navigation.map(({ label, href }) => (
-              <a key={href} href={href} className="flex min-h-11 items-center text-sm font-bold underline-offset-8 hover:underline focus-visible:underline">{label}</a>
+              <a key={href} href={href} aria-current={href === '/blog/' && isBlog ? 'page' : undefined} className="flex min-h-11 items-center text-sm font-bold underline-offset-8 hover:underline focus-visible:underline aria-[current=page]:underline">{label}</a>
             ))}
           </nav>
         </header>
 
         <main id="main" tabIndex={-1}>
-          {project ? <ProjectPage project={project} /> : isAbout ? (
+          {project ? <ProjectPage project={project} /> : post ? <BlogPage post={post} /> : isBlog ? <BlogIndexPage /> : isAbout ? (
             <section aria-labelledby="about-heading" className="py-16 sm:py-20">
               <h1 id="about-heading" className="mb-8 font-head text-5xl tracking-tight sm:text-7xl">About</h1>
               <div className="prose"><About /></div>
@@ -121,18 +129,12 @@ export default function App() {
             <Section id="blog" number="03" title="Blog">
               <ul className="divide-y-2 border-y-2">
                 {posts.map((post) => (
-                  <li key={post.href ?? post.title}>
-                    {post.href ? (
-                    <a href={post.href} className="flex min-h-16 items-center justify-between gap-5 px-3 py-5 text-lg font-bold hover:bg-primary hover:text-primary-foreground focus-visible:bg-primary focus-visible:text-primary-foreground">
-                      <span className="min-w-0 break-words">{post.title}</span>
+                  <li key={post.slug}>
+                    <a href={`/blog/${post.slug}/`} className="flex min-h-16 flex-wrap items-center justify-between gap-5 px-3 py-5 text-lg font-bold hover:bg-primary hover:text-primary-foreground focus-visible:bg-primary focus-visible:text-primary-foreground">
+                      <img src={post.image} alt="" width="606" height="894" loading="lazy" className="h-20 w-14 shrink-0 border-2 bg-white object-contain p-1" />
+                      <span className="min-w-0 flex-1 break-words">{post.title}</span>
                       <span aria-hidden="true" className="shrink-0">→</span>
                     </a>
-                    ) : (
-                      <div className="flex min-h-16 flex-wrap items-center justify-between gap-x-5 gap-y-2 px-3 py-5">
-                        <span className="min-w-0 break-words text-lg font-bold">{post.title}</span>
-                        <span className="font-mono text-xs text-muted-foreground">Coming soon</span>
-                      </div>
-                    )}
                   </li>
                 ))}
               </ul>

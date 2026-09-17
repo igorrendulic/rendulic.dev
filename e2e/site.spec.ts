@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+import matter from 'gray-matter'
 
 test.beforeEach(async ({ page }) => {
   // Local regressions should not depend on Cal.com or embedded media services.
@@ -27,7 +29,7 @@ test('home navigation reaches About and returns to the projects section', async 
 test('a project opens from the homepage and survives refresh', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('link', { name: /^Food Lens AI/ }).click()
-  await expect(page).toHaveURL('/projects/project-01/')
+  await expect(page).toHaveURL('/projects/food-lens-ai/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Food Lens AI')
   await page.reload()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Food Lens AI')
@@ -37,7 +39,7 @@ test('a project opens from the homepage and survives refresh', async ({ page }) 
 })
 
 test('project details expand and collapse with the keyboard', async ({ page }) => {
-  await page.goto('/projects/project-01/')
+  await page.goto('/projects/food-lens-ai/')
   const trigger = page.getByRole('button', { name: 'Low-Latency Vector Retrieval' })
   const detail = page.getByText(/Frequently queried products were kept in a/)
   await expect(trigger).toHaveAttribute('aria-expanded', 'false')
@@ -69,4 +71,52 @@ test('home fits the viewport and exposes the booking button', async ({ page }, t
     body: await page.screenshot({ fullPage: true }),
     contentType: 'image/png',
   })
+})
+
+
+const projectRoutes = [
+  ['project-01', 'food-lens-ai'],
+  ['project-02', 'cocoon-cam'],
+  ['project-03', 'halovision'],
+  ['project-04', 'chrysalis-cloud'],
+  ['project-05', 'azumio-health-fitness'],
+  ['project-09', 'cuemate'],
+  ['project-06', 'mailio'],
+  ['project-07', 'medgateway'],
+  ['project-08', 'open-source-projects'],
+  ['project-10', 'amplio'],
+]
+
+test('homepage project links preserve display order with descriptive URLs', async ({ page }) => {
+  await page.goto('/')
+  const links = page.getByRole('region', { name: 'Projects', exact: true }).getByRole('link')
+  await expect(links).toHaveCount(projectRoutes.length)
+  expect(await links.evaluateAll((elements) => elements.map((element) => element.getAttribute('href'))))
+    .toEqual(projectRoutes.map(([, slug]) => `/projects/${slug}/`))
+})
+
+for (const [filename, slug] of projectRoutes) {
+  const { data } = matter(readFileSync(`src/content/projects/${filename}.mdx`, 'utf8'))
+  test(`${slug} supports all direct URL forms with project metadata`, async ({ page }) => {
+    const errors: string[] = []
+    page.on('pageerror', (error) => errors.push(error.message))
+    for (const suffix of ['', '/', '/index.html']) {
+      const path = `/projects/${slug}${suffix}`
+      const response = await page.goto(path)
+      expect(response?.status()).toBe(200)
+      await expect(page).toHaveURL(path)
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(data.title)
+      await expect(page).toHaveTitle(`${data.title} — Igor Rendulic`)
+      await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', data.description)
+    }
+    expect(errors).toEqual([])
+  })
+}
+
+test('numbered project URLs are not matched or redirected', async ({ page }) => {
+  for (const suffix of ['', '/', '/index.html']) {
+    await page.goto(`/projects/project-01${suffix}`)
+    await expect(page).toHaveURL(`/projects/project-01${suffix}`)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Page not found')
+  }
 })

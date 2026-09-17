@@ -1,0 +1,232 @@
+---
+slug: how-i-process-over-5-million-emails-a-day
+title: An Email Pipeline Processing 5+ Million Emails a Year
+description: How Mailio uses S3, SQS, and horizontally scaled Go workers to handle bursty email traffic.
+image: /images/blog/mailio-received-daily.png
+imageAlt: Email processing pipeline from AWS SES through S3 and SQS to horizontally scaled email workers, the Mailio data layer, and backend.
+---
+
+Mailio’s email ingestion pipeline processes roughly **15,000 incoming emails per day, or more than 5 million per year**. On busier days, that number can exceed 25,000.
+
+At this scale, raw throughput isn’t particularly difficult. A few emails per second isn’t going to challenge modern infrastructure.
+
+The more interesting problem is **how that traffic arrives**.
+
+Email traffic isn’t uniform. Long periods of relatively low activity are interrupted by sharp bursts: newsletters going out, transactional systems sending batches, retries from other mail servers, or spam campaigns. Looking at an average of roughly 10 emails per minute hides most of that behavior.
+
+The architecture therefore isn’t designed around average throughput. It’s designed to **absorb bursts, process them asynchronously, and scale the expensive part of the pipeline independently from the rest of Mailio**.
+
+## Daily volume
+
+A typical day sees somewhere around 10,000–15,000 incoming messages, while busier days can exceed 25,000.
+But even daily totals hide what’s happening underneath.
+
+<img
+  src="/images/blog/email_processing_bursts.png"
+  alt="Received Daily bar chart showing daily email volumes."
+  width="1372"
+  height="542"
+  loading="lazy"
+/>
+
+At the second level, traffic is much more uneven. The baseline can be close to zero while short bursts reach several incoming messages per second.
+
+This distinction shaped the architecture.
+
+## Separating email reception from email processing 
+
+<img
+  src="/images/blog/mailio-email-processing-pipeline.png"
+  alt="Received Daily bar chart showing daily email volumes."
+  width="1372"
+  height="542"
+  loading="lazy"
+/>
+
+Incoming email reaches **Amazon SES over SMTP**. SES handles the Internet-facing SMTP infrastructure and stores the raw message in S3.
+
+Once the email has been written to S3, an **S3 event notification is delivered to SQS**. 
+
+That queue creates the boundary between receiving an email and processing it.
+
+```
+Internet → SES → S3 → SQS → Email Workers
+```
+This is important because accepting an email is relatively cheap. Processing one isn’t.
+
+If 1,000 messages arrive over a short period, I don’t need 1,000 messages’ worth of processing capacity immediately. SES and S3 can accept and store them, while SQS holds the work until processors are available.
+
+During normal traffic, messages spend very little time in the queue. During a burst, the queue grows temporarily and workers drain it.
+
+In other words: **arrival rate and processing rate don’t have to be the same**.  
+
+## The email workers
+
+The processing workers are separate services from the main Mailio backend.
+
+Each worker is written in Go and consumes messages from SQS. SQS ReceiveMessage supports retrieving up to 10 messages in a request, so workers fetch messages in batches and then process them concurrently.
+
+There are two dimensions of concurrency.
+
+The first is **inside a worker**. Go makes it inexpensive to run multiple independent processing operations concurrently using goroutines.
+
+```
+                    SQS
+                     │
+          ┌──────────┼──────────┐
+          ▼          ▼          ▼
+       Worker 1   Worker 2   Worker 3
+```
+
+When traffic is low, a small number of workers can keep up. When queue depth starts increasing, additional workers can be started. Once the backlog disappears, that capacity can be reduced again.
+
+This makes queue depth a much more useful scaling signal than average email traffic.
+
+## Receiving the email is the easy part
+
+A raw .eml file arriving in S3 is nowhere near ready to appear in someone’s inbox.
+
+The worker first needs to determine what the message is, where it belongs, whether it should be accepted, and how it should be represented internally.
+
+A simplified processing path looks something like this:
+```
+Raw email
+    │
+    ├── Resolve recipient
+    ├── Spam / abuse checks
+    ├── Handshake checks
+    ├── Parse MIME structure
+    ├── Extract attachments
+    ├── Process HTML / text
+    ├── Normalize metadata
+    └── Persist
+```
+### Recipient resolution 
+
+The worker first determines who the message belongs to.
+
+Determening who an email belongs to sounds trivial, but the recipient dispayed in the message isn't necessarily the recipient to whom the message was actually delivered. 
+
+SMTP has two different notions of recipients: the **SMTP envelope** used for delivery and the MIME headers contained inside the message. During SMTP delivery, the sender specifies one or more recipients using RCPT TO. The message itself can separately contain To:, Cc:, and other headers. Those two sets of addresses don’t have to match.
+
+There are several other edge cases the ingestion layer has to deal with. A user can appear in both To: and Cc:, or multiple times in the same recipient list. The same mailbox may be addressed through aliases or different representations of an address. Headers can contain display names such as John Smith &lt;john@example.com&gt;, quoted names, comments, folded lines, groups, and multiple recipients in a single field. Real-world messages also occasionally contain malformed addresses or headers generated by software that only approximately follows the relevant RFCs.
+
+Forwarding and mailing lists complicate things further. The SMTP envelope may point to a Mailio mailbox while the visible To: header still contains the original recipient. Mailing-list messages commonly preserve or rewrite visible recipient headers independently of the final SMTP delivery destination.
+
+### Spam and abuse processing
+
+Incoming Internet email is untrusted input.
+
+Before putting a message into a user’s mailbox, the pipeline applies spam and abuse checks and uses information collected during SMTP delivery to help decide how the message should be handled.
+
+This happens before the message becomes part of Mailio’s normal application data.
+
+### Mailio handshakes
+
+Mailio also has a concept that conventional email systems don’t: **a cryptographically signed handshake created by the recipient to explicitly trust a specific sender**.   
+
+### Separating attachments from messages
+
+Attachments are extracted while parsing the MIME structure rather than leaving the application to repeatedly interpret the original message.
+
+This has several advantages.
+
+The message body becomes much smaller and easier to work with. Attachments can have their own storage and metadata lifecycle. And clients don’t need to understand MIME just to display an email.
+
+The worker can identify attachments, extract their metadata and content, and leave the persisted message with references to them.
+
+The same applies to inline resources used by HTML messages.
+
+By the time the application sees an email, it shouldn’t need to know that a PDF originally lived three levels deep inside a multipart/mixed structure.
+
+### Turning arbitrary HTML into something displayable
+
+Email HTML deserves special treatment because it isn’t normal web HTML.
+
+Messages come from thousands of different generators and mail clients. Some contain complete HTML documents, some fragments. Styling may be inline, embedded, malformed, or specifically designed around the limitations of particular email clients.
+
+And HTML email is untrusted content.
+
+The processing layer therefore prepares the appropriate HTML or plain-text representation before persistence so that Mailio clients receive a predictable representation rather than having to repeatedly parse the original MIME message.
+
+Some of the generic email functionality I built for this pipeline eventually became the open-source [go-mailio-smtp-helpers](https://github.com/mailio/go-mailio-smtp-helpers) library.
+
+It contains reusable Go functionality around MIME parsing and other SMTP/email operations that aren’t specific to Mailio itself.
+
+## SQS isn't just there for scaling
+
+The queue also creates a useful **failure boundary**.
+
+Consider what would happen if all processing happened synchronously during SMTP delivery.
+
+A database slowdown could delay SMTP sessions. A problematic MIME message could tie up an SMTP worker. Attachment processing could increase connection times. An internal service failure could become an externally visible mail-delivery failure.
+
+Putting S3 and SQS between reception and processing changes that relationship.
+
+Once SES has accepted and stored the message, downstream processing can fail independently.
+
+If a worker fails while processing an email, the SQS message doesn’t need to disappear. After its visibility timeout expires, another worker can process it again.
+
+That introduces another important property: **processing must be idempotent**. If a message is processed multiple times, it would be displayed in users inbox as multiple copies.
+
+Retries are part of the design rather than an exceptional situation.
+
+## Scaling for the queue, not the average
+
+This brings the architecture back to the traffic graphs.
+
+Five million emails per year works out to only about:
+```
+~15,000 / day
+~625 / hour
+~10 / minute
+```
+
+if traffic were evenly distributed.
+
+It isn’t.
+
+What matters operationally is the relationship between three quantities:
+```
+arrival rate
+     ↓
+queue depth
+     ↓
+processing capacity
+```
+
+If the arrival rate temporarily exceeds processing capacity, SQS absorbs the difference.
+
+If that continues, queue depth increases.
+
+Additional workers increase processing capacity and drain the backlog. Once the arrival rate drops and the queue clears, those workers are no longer needed.
+
+This is also why I prefer scaling based on **backlog** rather than CPU alone for this kind of system. 
+
+A worker sitting at moderate CPU utilization doesn’t tell me whether the email system is healthy.
+
+A queue containing 50 messages might be completely normal.
+
+A queue containing 50,000 messages and continuing to grow tells me something much more important: **processing capacity isn’t keeping up with arrival rate**.
+
+## Keeping ingestion separate from the application
+
+The last architectural decision is perhaps the simplest: the email workers aren’t part of the Mailio backend.
+
+hey share the data layer, but they’re operationally separate workloads.
+
+That’s intentional.
+
+The backend handles users interacting with Mailio. The workers handle arbitrary traffic coming from the Internet.
+
+Those workloads have very different scaling characteristics.
+
+A newsletter sending 10,000 messages to Mailio users shouldn’t require scaling the API serving someone’s inbox. Likewise, increased application traffic shouldn’t reduce the capacity available for processing incoming mail.
+
+By the time the backend encounters an incoming message, most of the difficult work has already happened.
+
+The message has been received, durably stored, validated, parsed, checked, normalized, and persisted.
+
+The backend can remain relatively boring.
+
+And for infrastructure, **boring is usually a good outcome**.

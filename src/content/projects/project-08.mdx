@@ -1,19 +1,549 @@
 ---
+slug: open-source-projects
 title: Open Source Projects
-description: Placeholder overview, engineering approach, and outcomes.
+description: Open source tools, demos, and experiments I've built and shared.
 role: Creator & Maintainer
 ---
 
-Project details are not yet published.
+import { buttonVariants } from '@/components/ui/button'
 
-## Overview
+export const calorieMamaStars = 58 // Checked against the GitHub API on 2026-09-16.
 
-**Placeholder:** Describe the problem, who the project serves, and your role.
+export const videoEdgeStars = 24 // Checked against the GitHub API on 2026-09-16.
 
-## Engineering approach
+export const mimeEmailParserStars = 11 // Checked against the GitHub API on 2026-09-16.
 
-**Placeholder:** Explain the architecture, constraints, and key technical decisions.
+export const remoteMonitorControlStars = 8 // Checked against the GitHub API on 2026-09-16.
 
-## Outcomes
+export const taskGraphStars = 1 // Checked against the GitHub API on 2026-09-16.
 
-**Placeholder:** Add verified results, lessons learned, and supporting links when available.
+export const couchdbToolkitStars = 2 // Checked against the GitHub API on 2026-09-16.
+
+export const clinicSupportAgentStars = 2 // Checked against the GitHub API on 2026-09-16.
+
+export const web3StarterKitStars = 11 // Checked against the GitHub API on 2026-09-16.
+
+export const telegramSupportStars = 1 // Checked against the GitHub API on 2026-09-16.
+
+export const blueprintToCodeStars = 1 // Checked against the GitHub repository on 2026-09-16.
+
+export const loginWithMailioStars = 1 // Checked against the GitHub API on 2026-09-16.
+
+export const dnsblCheckerStars = 2 // Checked against the GitHub API on 2026-09-16.
+
+export const diskUsageHandlerStars = 1 // Checked against the GitHub API on 2026-09-16.
+
+export const smtpHelpersStars = 1 // Checked against the GitHub API on 2026-09-16.
+
+export const githubPrSkillStars = 0 // Checked against the GitHub API on 2026-09-16.
+
+export const mailioServerStars = 2 // Checked against the GitHub API on 2026-09-16.
+
+export const personalWebsiteStars = 0 // Checked against the GitHub API on 2026-09-16.
+
+<section aria-labelledby="calorie-mama-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  {/* Screenshot from the repository README: https://storage.googleapis.com/rendulic_public_images/food_recognition_example.png */}
+  <img
+    src="/images/projects/food-recognition-example.png"
+    alt="Android food recognition demo showing a photo of coffee and suggested matches including Hot Coffee and Latte"
+    width={500}
+    height={889}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-44 justify-self-start"
+  />
+  <div className="min-w-0">
+    <h2 id="calorie-mama-heading" className="mt-0 text-2xl">Food Recognition with Calorie Mama</h2>
+    <p>An Android sample app that identifies food and drinks in photos using the Calorie Mama AI API. Take a photo and the app displays possible matches, providing a working example of adding food recognition to an Android app.</p>
+    <a
+      href="https://github.com/igorrendulic/food_recognition_with_calorie_mama"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {calorieMamaStars > 0 && <span>{calorieMamaStars}<span className="sr-only"> stars</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="video-edge-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  {/* Repository illustration: https://github.com/igorrendulic/video-edge-ai-proxy/blob/master/web/src/assets/screenshots/rtmp_camera.jpg */}
+  <img
+    src="/images/projects/video-edge-ai-proxy-camera.jpg"
+    alt="Camera lens illustration from the Video Edge-AI Proxy repository"
+    width={640}
+    height={480}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-44 justify-self-start"
+  />
+  <div className="min-w-0">
+    <h2 id="video-edge-heading" className="mt-0 text-2xl">Video Edge-AI Proxy</h2>
+    <p>A Go-based proxy that brings multiple RTSP camera streams into a shared gRPC interface for running computer vision tasks at the edge. It supports annotating footage and selectively streaming or storing video for later analysis, cloud processing, or training datasets.</p>
+    <a
+      href="https://github.com/igorrendulic/video-edge-ai-proxy"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {videoEdgeStars > 0 && <span>{videoEdgeStars}<span className="sr-only"> stars</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="mime-email-parser-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  {/* Repository icon: https://github.com/igorrendulic/MimeEmailParser/blob/master/icon-72x72.png */}
+  <img
+    src="/images/projects/mime-email-parser-icon.png"
+    alt="MimeEmailParser blue envelope icon"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="mime-email-parser-heading" className="mt-0 text-2xl">MimeEmailParser</h2>
+    <p>A Swift library for parsing and validating email addresses, originally developed for the Mailio iOS app. It handles individual addresses, address lists and groups, and decodes RFC 2047 encoded words used in display names.</p>
+    <a
+      href="https://github.com/igorrendulic/MimeEmailParser"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {mimeEmailParserStars > 0 && <span>{mimeEmailParserStars}<span className="sr-only"> stars</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="remote-monitor-control-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  {/* Repository icon: https://github.com/igorrendulic/remoteexternalmonitorcontrol/blob/master/iOS/monitorcontrol/monitorcontrol/Assets.xcassets/tv.imageset/tv.png */}
+  <img
+    src="/images/projects/remote-monitor-control-tv.png"
+    alt="Television icon from the Remote External Monitor Control iOS app"
+    width={64}
+    height={64}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-16 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="remote-monitor-control-heading" className="mt-0 text-2xl">Remote External Monitor Control</h2>
+    <p>An iOS remote for an external monitor connected to a Mac, built to switch off a monitor used as a bedroom TV without getting out of bed. The Swift app connects to a Go server on the Mac, which uses ddcctl to control the display over DDC/CI.</p>
+    <a
+      href="https://github.com/igorrendulic/remoteexternalmonitorcontrol"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {remoteMonitorControlStars > 0 && <span>{remoteMonitorControlStars}<span className="sr-only"> stars</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="task-graph-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  {/* Repository screenshot: https://github.com/igorrendulic/task-graph/blob/main/assets/task-graph-controller.jpg */}
+  <a href="/images/projects/task-graph-controller.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open the Task Graph controller screenshot at full size in a new tab" className="w-44 justify-self-start self-start">
+    <img
+      src="/images/projects/task-graph-controller.jpg"
+      alt="Task Graph controller in tmux showing completed, running, and pending tasks with their dependencies"
+      width={2128}
+      height={460}
+      loading="lazy"
+      decoding="async"
+      className="my-0 w-full"
+    />
+  </a>
+  <div className="min-w-0">
+    <h2 id="task-graph-heading" className="mt-0 text-2xl">Task Graph</h2>
+    <p>A Codex skill that turns approved implementation plans into focused task briefs, a Kanban board, and an executable dependency graph. It coordinates coding agents in isolated Git worktrees, runs independent tasks in parallel, and tracks progress in tmux, with support for resuming interrupted runs and reviewing changes before merging.</p>
+    <a
+      href="https://github.com/igorrendulic/task-graph"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {taskGraphStars > 0 && <span>{taskGraphStars}<span className="sr-only"> {taskGraphStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="couchdb-toolkit-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/couchdb.svg"
+    alt="Apache CouchDB logo"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="couchdb-toolkit-heading" className="mt-0 text-2xl">Codex CouchDB Toolkit</h2>
+    <p>A Codex plugin for investigating CouchDB-backed applications by combining database records with the repository code that creates and queries them. It provides a read-only MCP server, a CLI with structured JSON output, and reusable investigation recipes for tracing application state and debugging data issues.</p>
+    <a
+      href="https://github.com/igorrendulic/codex-couchdb-toolkit"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {couchdbToolkitStars > 0 && <span>{couchdbToolkitStars}<span className="sr-only"> {couchdbToolkitStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="clinic-support-agent-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  {/* Repository diagram: https://github.com/igorrendulic/demo-clinic-support-agent/blob/main/assets/agent_flow.png */}
+  <a href="/images/projects/clinic-support-agent-graph.png" target="_blank" rel="noopener noreferrer" aria-label="Open the Clinic Support Agent workflow diagram at full size in a new tab" className="w-44 justify-self-start self-start">
+    <img
+      src="/images/projects/clinic-support-agent-graph.png"
+      alt="Clinic Support Agent workflow linking patient identity verification to agents for booking, cancelling, and rescheduling appointments"
+      width={983}
+      height={1447}
+      loading="lazy"
+      decoding="async"
+      className="my-0 w-full bg-white"
+    />
+  </a>
+  <div className="min-w-0">
+    <h2 id="clinic-support-agent-heading" className="mt-0 text-2xl">Clinic Support Agent — LangGraph Experiment</h2>
+    <p>A conversational appointment scheduling demo I built to experiment with LangGraph v1. It explores agent handoffs and stateful conversations through patient identity verification, booking, cancellation, and rescheduling, including confirmation steps, scheduling conflicts, and corrections during a conversation.</p>
+    <a
+      href="https://github.com/igorrendulic/demo-clinic-support-agent"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {clinicSupportAgentStars > 0 && <span>{clinicSupportAgentStars}<span className="sr-only"> {clinicSupportAgentStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="web3-starter-kit-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  {/* Repository screenshot: https://github.com/eth-salt-lake/web3-starter-kit/blob/main/docimages/slc_dao_web_starter_kit_screenshot.png */}
+  <a href="/images/projects/web3-starter-kit.png" target="_blank" rel="noopener noreferrer" aria-label="Open the Web3 Starter Kit screenshot at full size in a new tab" className="w-44 justify-self-start self-start">
+    <img
+      src="/images/projects/web3-starter-kit.png"
+      alt="Web3 Starter Kit dashboard showing a connected Ethereum wallet, network details, and transaction history"
+      width={838}
+      height={800}
+      loading="lazy"
+      decoding="async"
+      className="my-0 w-full"
+    />
+  </a>
+  <div className="min-w-0">
+    <h2 id="web3-starter-kit-heading" className="mt-0 text-2xl">Web3 Starter Kit</h2>
+    <p>A starter template and educational resource for building decentralized applications with Next.js, React, TypeScript, and Material UI. It brings together MetaMask, Coinbase Wallet, and WalletConnect connections, configurable blockchain networks, and transaction history from Etherscan, giving developers a customizable foundation for a Web3 frontend.</p>
+    <a
+      href="https://github.com/eth-salt-lake/web3-starter-kit"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {web3StarterKitStars > 0 && <span>{web3StarterKitStars}<span className="sr-only"> {web3StarterKitStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="telegram-support-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/telegram.svg"
+    alt="Telegram logo"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="telegram-support-heading" className="mt-0 text-2xl">Mailio Telegram Support Agent</h2>
+    <p>A support plugin I built for answering questions in the Mailio Telegram group. It helps Codex and Claude search Telegram support history, Mailio documentation, and repository code to draft replies grounded in evidence. Hybrid search runs locally with SQLite FTS5 and vector embeddings, and replies are posted only after explicit operator confirmation.</p>
+    <a
+      href="https://github.com/igorrendulic/tg-customer-support-plugin"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {telegramSupportStars > 0 && <span>{telegramSupportStars}<span className="sr-only"> {telegramSupportStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="blueprint-to-code-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/blueprint.svg"
+    alt="Source code document icon"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="blueprint-to-code-heading" className="mt-0 text-2xl">Blueprint to Code — TDD in the AI Era</h2>
+    <p>An experiment I built to explore whether test-driven development can make AI-generated code more trustworthy. The idea is to provide a clear integration API, a blueprint consisting of a specification and implementation plan, and behavior-focused tests, so developers can use Codex or Claude to generate an implementation that fits their own codebase with greater confidence.</p>
+    <p>The initial test case is a Budget Reservation Engine, covering state transitions, idempotency, and concurrency. The experiment asks whether an agent can repeatedly regenerate correct behavior from the same blueprint and tests, using test failures to guide repairs.</p>
+    <a
+      href="https://github.com/igorrendulic/blueprint-to-code"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {blueprintToCodeStars > 0 && <span>{blueprintToCodeStars}<span className="sr-only"> {blueprintToCodeStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="login-with-mailio-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/login.svg"
+    alt="Login key icon"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="login-with-mailio-heading" className="mt-0 text-2xl">Login with Mailio — OIDC Web Component</h2>
+    <p>A reusable JavaScript web component for adding “Login with Mailio” to a website using mail.io’s OpenID Connect (OIDC) service. It starts the authorization code flow through your backend, with a Node.js example showing the redirect callback and server-side token exchange.</p>
+    <a
+      href="https://github.com/mailio/login-with-mailio-js"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {loginWithMailioStars > 0 && <span>{loginWithMailioStars}<span className="sr-only"> {loginWithMailioStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="dnsbl-checker-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/dnsbl.svg"
+    alt="Shield with a checkmark icon"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="dnsbl-checker-heading" className="mt-0 text-2xl">Go DNSBL Blacklist Checker</h2>
+    <p>A Go utility for checking whether an IPv4 address appears on DNS-based blocklists (DNSBLs), helping investigate email delivery and sender reputation issues. It works as a command-line tool or a package within a Go application, with built-in blocklist providers and configurable DNS nameservers.</p>
+    <a
+      href="https://github.com/mailio/go-dnsbl-blacklist-checker"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {dnsblCheckerStars > 0 && <span>{dnsblCheckerStars}<span className="sr-only"> {dnsblCheckerStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="disk-usage-handler-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/disk-usage.svg"
+    alt="Storage drive icon"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="disk-usage-handler-heading" className="mt-0 text-2xl">Mailio Disk Usage Handler — AWS S3 Inventory</h2>
+    <p>A Go module for assessing per-user storage usage in Amazon S3 using AWS S3 Inventory reports. It periodically reads inventory data in Parquet format, groups file information by user, and keeps usage totals in memory so applications can query each user’s storage size in bytes and file count.</p>
+    <a
+      href="https://github.com/mailio/go-mailio-diskusage-handler"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {diskUsageHandlerStars > 0 && <span>{diskUsageHandlerStars}<span className="sr-only"> {diskUsageHandlerStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="smtp-helpers-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/smtp.svg"
+    alt="Email envelope icon"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="smtp-helpers-heading" className="mt-0 text-2xl">Mailio SMTP Helpers — MIME Parsing &amp; Message Building</h2>
+    <p>A Go library for converting between mail.io’s message model and MIME email. It parses headers, text and HTML bodies, attachments, and inline images; decodes character encodings; sanitizes HTML; and extracts forwarding details and existing SPF, DKIM, and DMARC results from message headers. It also builds outgoing MIME messages, generates Message-IDs, and creates delivery-failure and spam-complaint reports.</p>
+    <a
+      href="https://github.com/mailio/go-mailio-smtp-helpers"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {smtpHelpersStars > 0 && <span>{smtpHelpersStars}<span className="sr-only"> {smtpHelpersStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="mailio-server-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/server.svg"
+    alt="Server icon"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="mailio-server-heading" className="mt-0 text-2xl">Go Mailio Server — DIDComm v2 Messaging</h2>
+    <p>A Go backend server for mail.io that enables communication between independent servers over DIDComm v2. It implements the Mailio specifications, allowing separately operated servers to exchange messages. The backend integrates CouchDB, Redis, and S3 storage, with support for SMTP email through Mailgun.</p>
+    <a
+      href="https://github.com/mailio/go-mailio-server"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {mailioServerStars > 0 && <span>{mailioServerStars}<span className="sr-only"> {mailioServerStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="github-pr-skill-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/images/projects/icons/github.svg"
+    alt="GitHub logo"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="github-pr-skill-heading" className="mt-0 text-2xl">GitHub PR Skill</h2>
+    <p>A Codex skill for turning local repository changes into reviewable GitHub pull requests. It guides the agent through inspecting Git state, choosing a branch, committing intended changes, and creating or updating a PR with the GitHub CLI. The workflow preserves unrelated local work and writes descriptions that explain the change, its risks, and how it was validated.</p>
+    <a
+      href="https://github.com/igorrendulic/github-pr-skill"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {githubPrSkillStars > 0 && <span>{githubPrSkillStars}<span className="sr-only"> {githubPrSkillStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>
+
+<section aria-labelledby="personal-website-heading" className="grid gap-6 border-t-2 py-8 sm:grid-cols-[11rem_minmax(0,1fr)]">
+  <img
+    src="/favicon.svg"
+    alt="Igor Rendulic monogram"
+    width={72}
+    height={72}
+    loading="lazy"
+    decoding="async"
+    className="my-0 w-18 justify-self-start border-0"
+  />
+  <div className="min-w-0">
+    <h2 id="personal-website-heading" className="mt-0 text-2xl">rendulic.dev — This Website</h2>
+    <p>The source code for the website you’re browsing. Built with React, TypeScript, Tailwind CSS, and Vite, it uses MDX for project write-ups and a NeoBrutalist visual style to present my engineering work, experience, and open source projects.</p>
+    <a
+      href="https://github.com/igorrendulic/rendulic.dev"
+      target="_blank"
+      rel="noopener noreferrer"
+      className={buttonVariants({ variant: 'outline', className: 'mt-2 min-h-11 whitespace-normal no-underline' })}
+    >
+      <span>View on GitHub</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+        <path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9Z" />
+      </svg>
+      {personalWebsiteStars > 0 && <span>{personalWebsiteStars}<span className="sr-only"> {personalWebsiteStars === 1 ? 'star' : 'stars'}</span></span>}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  </div>
+</section>

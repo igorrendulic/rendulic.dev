@@ -29,8 +29,62 @@ each project as `projects/<slug>/index.html`, following
 No SPA rewrites, backend, or environment variables are required. Serve the
 whole `dist/` directory with directory-index support (normally enabled by default).
 Project HTML entries are generated in memory from `build/project.html`, using
-the MDX filenames in `src/content/projects/` to discover routes. Only the build
-output contains per-project HTML files; development serves the same template.
+the required MDX frontmatter slugs in `src/content/projects/` to discover routes.
+Only the build output contains per-project HTML files; development serves the same
+template.
+
+## Cloudflare deployment from GitHub
+
+The site uses Workers Static Assets, configured in `wrangler.jsonc`. No Worker
+script, database, runtime secrets, or Cloudflare Vite plugin is needed.
+
+Commit and push the site files, `wrangler.jsonc`, `package.json`, and
+`package-lock.json` to GitHub. In Cloudflare **Workers & Pages**, create a Worker
+connected to this repository (or connect Git under an existing Worker's
+**Settings > Build**) with these settings:
+
+| Setting | Value |
+| --- | --- |
+| Worker name | `rendulic-dev` (must match `wrangler.jsonc`) |
+| Production branch | `main` |
+| Root directory | Repository root (leave the default) |
+| Build command | `npm run check` |
+| Deploy command | `npm run deploy` |
+| Non-production branch deploy command | `npm run deploy:preview` |
+
+Cloudflare installs dependencies before the build and reads Node 22 from
+`.nvmrc`. `npm run check` runs lint, metadata tests, TypeScript, and the production
+build; browser tests run separately. Leave automatic dependency installation
+enabled. Cloudflare creates the build API token; no GitHub Actions workflow or
+GitHub secret is required. These settings follow the
+[Workers Builds configuration](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/).
+
+Enable non-production branch builds if you want branch preview URLs. The preview
+command uploads a version without replacing production; pushes to `main` deploy
+production automatically.
+
+To check the production build with Cloudflare's local asset routing:
+
+```sh
+npm run check
+npm run preview:cloudflare
+```
+
+Open the URL printed by Wrangler. Verify `/`, `/about.html` (redirects to
+`/about`), `/blog/`, a project and blog post URL, and a nonexistent URL (HTTP 404).
+The site uses directory indexes, not an SPA fallback.
+
+After verifying the deployed `workers.dev` URL, add `rendulic.dev` under
+**Settings > Domains & Routes > Add > Custom Domain**. The domain must be an
+active Cloudflare zone. See
+[Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/).
+
+For an optional manual deployment after authenticating with `npx wrangler login`:
+
+```sh
+npm run check
+npm run deploy
+```
 
 ## Browser tests
 
@@ -84,16 +138,29 @@ needed to load the newly configured Chrome DevTools MCP integration.
 ## Content
 
 - `src/content/site.ts`: identity, navigation, contact email, published `posts`
-  (`title`, `href`), and project registration (order, `slug`, `Content`).
-  Project names, roles, and descriptions are imported from their MDX metadata.
+  and project registration (order and `Content`).
+  Project names, roles, descriptions, and URL slugs are imported from their MDX metadata.
   Set `email` to a verified address to display the email link. List posts newest
-  first; placeholder posts use `href: null` and display “Coming soon”. Project
+  first. Blog metadata comes from each post's MDX frontmatter. Project
   links are derived from their slugs and open their associated MDX components.
 - `src/content/intro.mdx`: introduction.
 - `src/content/projects.mdx`: placeholder shown until project links are added.
 - `src/content/projects/project-01.mdx` through `project-10.mdx`: editable
-  project detail pages at `/projects/project-01/` through `/projects/project-10/`.
+  project detail pages at `/projects/<slug>/`, using each file's frontmatter slug.
 - `src/content/blog.mdx`: draft introduction, not displayed on the homepage.
+- `/blog/`: dedicated blog index, linked from the top navigation. It uses the
+  NeoBrutalism Card component and the registered MDX posts, with one column on
+  mobile and two on desktop. A single post gets a wider split layout.
+  `blog/index.html` supplies its metadata and static build entry; the output is
+  `dist/blog/index.html`. Post pages link back to this index.
+- `src/content/blog/post-01.mdx`: first blog post. Edit the body here when ready;
+  its `slug` creates `/blog/how-i-process-10000-emails-a-day/`. Blog frontmatter
+  uses `slug`, `title`, `description`, `image`, and `imageAlt`, with no role.
+  The `image` is displayed as a homepage thumbnail, on the blog index, and above
+  the post body. Images live
+  in `public/images/blog/`. Register new posts in `src/content/site.ts`.
+  Blog HTML uses the shared project template and is emitted to
+  `dist/blog/<slug>/index.html` for static hosting.
 - `src/content/about.mdx`: biography and experience on `/about.html`.
 
 These MDX files compile to React at build time; there is no browser Markdown
@@ -105,14 +172,16 @@ about employers, years of experience, or project metrics.
 The homepage shows a responsive grid of project names linking to their detail
 pages, followed by blog posts when entries exist. The Blog section and
 navigation link stay hidden when there are no posts. About has its own page.
+Homepage blog thumbnails continue to link directly to individual posts.
 Keep longer articles and case studies in Markdown or MDX as they are added.
 
 ### Add a project
 
-Edit each project's title, role, and description **only in its MDX frontmatter**:
+Edit each project's slug, title, role, and description **only in its MDX frontmatter**:
 
 ```mdx
 ---
+slug: food-lens-ai
 title: Food Lens AI
 role: Role to be added
 description: Placeholder overview, engineering approach, and outcomes.
@@ -126,26 +195,31 @@ The title updates the homepage label, page heading, and browser title (with an
 button. The description updates the page introduction and HTML
 description. Vite parses frontmatter with `gray-matter` before MDX compilation and
 fills each project HTML entry during development and production builds, so head
-metadata is present before JavaScript runs. All three fields must be non-empty strings;
-invalid frontmatter reports the source filename. Quote YAML values containing
+metadata is present before JavaScript runs. All four fields must be non-empty
+strings. Slugs must be unique and contain only
+lowercase alphanumeric words separated by single hyphens (for example,
+`food-lens-ai`); invalid frontmatter reports the source filename, and duplicate
+slugs report both files. Quote YAML values containing
 special syntax, for example `title: 'Food: "Lens" & <AI>'`. Project article edits
 reload development pages to refresh both content and HTML metadata.
 
-Changing a displayed title does not change its filename or URL.
+Changing a displayed title does not change its filename or URL. The explicit
+`slug` controls the URL independently of the MDX filename. The former numbered
+project URLs have been removed without redirects.
 
-1. Create `src/content/projects/<slug>.mdx` with the required frontmatter and
+1. Create `src/content/projects/<filename>.mdx` with the required frontmatter and
    verified content. The shared
    layout supplies the page's `h1`; start article sections with `##` headings.
    Lists, images (include meaningful alt text), blockquotes, inline code, and
    fenced code blocks are styled. Code blocks scroll horizontally and accept
    keyboard focus. Store public images in `public/` and use root-relative URLs.
 2. Import the MDX component and its `metadata` export in `src/content/site.ts`.
-   Register a unique URL-safe `slug`, the `Content` component,
+   Register `slug: metadata.slug`, the `Content` component,
    `name: metadata.title`, `role: metadata.role`, and `description: metadata.description`.
-3. Keep the MDX filename and registry slug identical. HTML entries are discovered
-   automatically; no HTML copy or Vite config change is needed. Restart the dev
-   server after adding or removing a project. Edit `build/project.html` to change
-   the shared HTML shell, retaining its `<!-- project-metadata -->` marker.
+3. Choose a unique frontmatter slug. HTML entries are discovered automatically;
+   no HTML copy or Vite config change is needed. Restart the dev server after
+   adding or removing a project or changing a slug. Edit `build/project.html` to
+   change the shared HTML shell, retaining its `<!-- project-metadata -->` marker.
 4. Run `npm run check`, then verify the homepage link, a direct visit, and a
    refresh. To test the build with no SPA fallback, run
    `python3 -m http.server 4173 --directory dist` and open

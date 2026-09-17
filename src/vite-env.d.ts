@@ -6,3 +6,9 @@ declare module './projects/*.mdx' {
   const Content: import('mdx/types').MDXContent
   export default Content
 }
+
+declare module './blog/*.mdx' {
+  export const metadata: import('./content/blog-metadata').BlogMetadata
+  const Content: import('mdx/types').MDXContent
+  export default Content
+}
