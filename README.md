@@ -33,6 +33,13 @@ the required MDX frontmatter slugs in `src/content/projects/` to discover routes
 Only the build output contains per-project HTML files; development serves the same
 template.
 
+## Analytics
+
+Production builds include the [Google Analytics tag](https://developers.google.com/tag-platform/gtagjs)
+on every page using measurement ID `G-70NFLBGY8H`, configured in `vite.config.ts`.
+The tag is omitted from `npm run dev`; previews of production builds include it.
+After deployment, visit the site and check the property's Realtime report.
+
 ## Cloudflare deployment from GitHub
 
 The site uses Workers Static Assets, configured in `wrangler.jsonc`. No Worker

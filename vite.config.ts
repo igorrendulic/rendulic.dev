@@ -6,8 +6,31 @@ import { defineConfig } from 'vite'
 import { projectEntries, projectMetadata } from './build/project-metadata.ts'
 import { blogEntries, blogMetadata } from './build/blog-metadata.ts'
 
+const googleAnalyticsId = 'G-70NFLBGY8H'
+
 export default defineConfig({
   plugins: [
+    {
+      name: 'google-analytics',
+      apply: 'build',
+      transformIndexHtml() {
+        return [
+          {
+            tag: 'script',
+            attrs: { async: true, src: `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsId}` },
+            injectTo: 'head-prepend',
+          },
+          {
+            tag: 'script',
+            children: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${googleAnalyticsId}');`,
+            injectTo: 'head-prepend',
+          },
+        ]
+      },
+    },
     {
       name: 'blog-index-route',
       configureServer(server) {
