@@ -6,6 +6,7 @@ test('deployed assets include security headers and preserve old article links', 
   expect(response.headers()['strict-transport-security']).toBe('max-age=31536000')
   expect(response.headers()['x-content-type-options']).toBe('nosniff')
   expect(response.headers()['x-frame-options']).toBe('DENY')
+  expect(response.headers()['cache-control']).toContain('no-transform')
   expect(response.headers()['content-security-policy']).toContain("frame-ancestors 'none'")
   expect(response.headers()['content-security-policy']).not.toContain("script-src 'self' 'unsafe-inline'")
   expect(await response.text()).not.toContain('googletagmanager.com/gtag/js')

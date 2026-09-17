@@ -62,6 +62,12 @@ Worker-first routing invokes the Worker for asset requests; normal Workers
 request limits/billing apply. Cloudflare's **SSL/TLS > Edge Certificates > Always
 Use HTTPS** can additionally redirect at the zone before the Worker runs.
 
+The Worker adds `Cache-Control: no-transform` to HTML responses to prevent
+Cloudflare's automatic Web Analytics beacon injection. It preserves existing
+cache directives and leaves non-HTML assets unchanged. This also disables other
+proxy transformations of HTML; Google Analytics still uses the site's opt-in
+consent controls. See [Cloudflare's injection documentation](https://developers.cloudflare.com/web-analytics/get-started/).
+
 `public/_headers` configures HSTS (without forcing subdomains), CSP, anti-framing,
 MIME-sniffing protection, referrer policy, and permissions policy. The CSP allows
 the current booking, analytics and video services. `public/_redirects` preserves

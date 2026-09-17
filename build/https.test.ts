@@ -23,3 +23,35 @@ test('HTTPS and loopback development requests preserve asset behavior', async ()
     assert.equal(await response.text(), 'Not found')
   }
 })
+
+test('HTML responses prevent analytics injection while preserving caching, status, and body', async () => {
+  for (const status of [200, 404]) {
+    const response = await worker.fetch(new Request('https://rendulic.dev/blog/'), {
+      ASSETS: { fetch: async () => new Response('<!doctype html><h1>Page</h1>', {
+        status,
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=0, must-revalidate',
+          'ETag': '"test"',
+          'Content-Security-Policy': "default-src 'self'",
+        },
+      }) },
+    })
+    assert.equal(response.status, status)
+    assert.equal(response.headers.get('cache-control'), 'public, max-age=0, must-revalidate, no-transform')
+    assert.equal(response.headers.get('etag'), '"test"')
+    assert.equal(response.headers.get('content-security-policy'), "default-src 'self'")
+    assert.equal(await response.text(), '<!doctype html><h1>Page</h1>')
+  }
+})
+
+test('non-HTML assets retain their original response and cache policy', async () => {
+  const asset = new Response('body {}', { headers: {
+    'Content-Type': 'text/css', 'Cache-Control': 'public, max-age=31536000, immutable',
+  } })
+  const response = await worker.fetch(new Request('https://rendulic.dev/assets/main.css'), {
+    ASSETS: { fetch: async () => asset },
+  })
+  assert.equal(response, asset)
+  assert.equal(response.headers.get('cache-control'), 'public, max-age=31536000, immutable')
+})

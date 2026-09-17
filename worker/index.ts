@@ -7,6 +7,12 @@ export default {
       url.protocol = 'https:'
       return Response.redirect(url.toString(), 308)
     }
-    return env.ASSETS.fetch(request)
+    const asset = await env.ASSETS.fetch(request)
+    if (!/^text\/html(?:;|$)/i.test(asset.headers.get('content-type') ?? '')) return asset
+
+    // Cloudflare honors no-transform by skipping automatic Web Analytics injection.
+    const response = new Response(asset.body, asset)
+    response.headers.append('Cache-Control', 'no-transform')
+    return response
   },
 }
