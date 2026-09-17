@@ -1,9 +1,9 @@
 ---
-slug: how-i-process-over-5-million-emails-a-day
+slug: how-i-process-over-5-million-emails-a-year
 title: An Email Pipeline Processing 5+ Million Emails a Year
 description: How Mailio uses S3, SQS, and horizontally scaled Go workers to handle bursty email traffic.
 image: /images/blog/mailio-received-daily.png
-imageAlt: Email processing pipeline from AWS SES through S3 and SQS to horizontally scaled email workers, the Mailio data layer, and backend.
+imageAlt: Bar chart showing Mailio's daily incoming email volume.
 ---
 
 Mailio’s email ingestion pipeline processes roughly **15,000 incoming emails per day, or more than 5 million per year**. On busier days, that number can exceed 25,000.
@@ -23,7 +23,7 @@ But even daily totals hide what’s happening underneath.
 
 <img
   src="/images/blog/email_processing_bursts.png"
-  alt="Received Daily bar chart showing daily email volumes."
+  alt="Email arrival-rate chart showing short bursts above a low baseline."
   width="1372"
   height="542"
   loading="lazy"
@@ -37,7 +37,7 @@ This distinction shaped the architecture.
 
 <img
   src="/images/blog/mailio-email-processing-pipeline.png"
-  alt="Received Daily bar chart showing daily email volumes."
+  alt="Email processing pipeline from AWS SES through S3 and SQS to email workers, the Mailio data layer, and backend."
   width="1372"
   height="542"
   loading="lazy"
@@ -213,7 +213,7 @@ A queue containing 50,000 messages and continuing to grow tells me something muc
 
 The last architectural decision is perhaps the simplest: the email workers aren’t part of the Mailio backend.
 
-hey share the data layer, but they’re operationally separate workloads.
+They share the data layer, but they’re operationally separate workloads.
 
 That’s intentional.
 

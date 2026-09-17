@@ -84,7 +84,7 @@ const projectRoutes = [
   ['project-06', 'mailio'],
   ['project-07', 'medgateway'],
   ['project-08', 'open-source-projects'],
-  ['project-10', 'amplio'],
+  ['project-10', 'igor-rendulic-early-career'],
 ]
 
 test('homepage project links preserve display order with descriptive URLs', async ({ page }) => {

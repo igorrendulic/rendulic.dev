@@ -14,11 +14,11 @@ test('Blog navigation opens a dedicated index with keyboard-accessible post card
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
   }
   await page.reload()
-  const card = page.getByRole('link', { name: 'How I Process 10,000+ Emails a Day', exact: true })
+  const card = page.getByRole('link', { name: 'An Email Pipeline Processing 5+ Million Emails a Year', exact: true })
   await expect(card.locator('img')).toBeVisible()
   await card.focus()
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL('/blog/how-i-process-10000-emails-a-day/')
+  await expect(page).toHaveURL('/blog/how-i-process-over-5-million-emails-a-year/')
   await page.getByRole('link', { name: 'Back to blog' }).click()
   await expect(page).toHaveURL('/blog/')
 })
@@ -28,17 +28,17 @@ test('the first blog post opens from its cover, survives direct loads, and retur
     ? route.continue() : route.abort())
   const errors: string[] = []
   page.on('pageerror', (error) => errors.push(error.message))
-  const title = 'How I Process 10,000+ Emails a Day'
-  const path = '/blog/how-i-process-10000-emails-a-day'
+  const title = 'An Email Pipeline Processing 5+ Million Emails a Year'
+  const path = '/blog/how-i-process-over-5-million-emails-a-year'
   await page.goto('/#blog')
   const link = page.getByRole('link', { name: title, exact: true })
-  await expect(link.locator('img')).toHaveAttribute('src', '/images/blog/mailio-email-processing-pipeline.png')
+  await expect(link.locator('img')).toHaveAttribute('src', '/images/blog/mailio-received-daily.png')
   await link.click()
   for (const suffix of ['/', '', '/index.html']) {
     await page.goto(path + suffix)
     await expect(page).toHaveTitle(`${title} — Igor Rendulic`)
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(title)
-    await expect(page.locator('main img')).toHaveCount(2)
+    await expect(page.locator('main img')).toHaveCount(3)
     for (const img of await page.locator('main img').all()) {
       await img.scrollIntoViewIfNeeded()
       await expect(img).toBeVisible()

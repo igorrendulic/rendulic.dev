@@ -75,8 +75,6 @@ import ProjectDetailSection from '@/components/ProjectDetailSection'
 
 Food Lens AI was a large scale production food-recognition and nutrition platform. I owned the backend and ML infrastructure behind the system, operating at **50+ requests per second with &lt;300 ms inference latency**.
 
-Pipeline cleanup of 20M+ images, 1M+ indexed products, 50+ req/s , &lt; 300 ms inference latency
-
 The interesting challenge was not simply improving the recognition model. It was building the data pipelines, retrieval architecture, evaluation systems, and production infrastructure required to make computer-vision-based food recognition work reliably at scale.
 
 
@@ -140,15 +138,14 @@ The technology was integrated with **Samsung Bixby** and the Food Recognition AP
 
 ## Outcomes
 
-* Scaled packaged-goods recognition from no usable corpus to 3M+ production-ready products, derived from more than 20M collected images.
-* Served production food recognition at 20+ req/s with &lt;300 ms inference latency while combining CNN classification and large-scale vector retrieval.
+* Scaled packaged-goods recognition from no usable corpus to 1M+ production-ready products, derived from more than 20M collected images.
+* Served production food recognition at 50+ req/s with &lt;300 ms inference latency while combining CNN classification and large-scale vector retrieval.
 * Expanded Food Lens AI beyond visual classification into product and nutritional retrieval, supporting both packaged goods and detailed macro/micronutrient queries.
 * Shipped the technology into consumer and B2B products, including Samsung Bixby and enterprise integrations such as Helix.
 * Established regression testing for a continuously evolving ML corpus, allowing new products, labels, embeddings, and retrieval changes to be evaluated against curated golden datasets before production.
 
 - <a href="https://thespoon.tech/samsung-adds-food-image-recognition-to-bixby-through-calorie-mama-api/" target="_blank" rel="noopener noreferrer">Samsung adds food image recognition to Bixby through CalorieMama API</a>
 - <a href="https://www.sportsbusinessjournal.com/Daily/Issues/2017/08/20/Technology/fitness-app-dna-food-image-recognition/" target="_blank" rel="noopener noreferrer">Fitness app DNA food image recognition</a>
-
 
 
 

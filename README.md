@@ -3,6 +3,12 @@
 Personal developer website for Igor Rendulic. Built with React, TypeScript,
 Vite, Tailwind CSS, and build-time MDX. The design follows [NeoBrutalism](https://neobrutalism.com/docs).
 
+## License
+
+Original website code is available under the [MIT license](LICENCE). Articles,
+biographical/project copy, images, videos, logos, and third-party code are excluded.
+See [third-party notices](THIRD_PARTY_NOTICES.md).
+
 ## Development
 
 Use Node.js 22.12+ (Node 22 LTS is pinned in `.nvmrc`) and npm.
@@ -26,7 +32,7 @@ The production build is written to `dist/` and can be hosted as static files.
 The homepage uses native section links. About is emitted as `about.html`, and
 each project as `projects/<slug>/index.html`, following
 [Vite's multipage setup](https://vite.dev/guide/build.html#multi-page-app).
-No SPA rewrites, backend, or environment variables are required. Serve the
+No SPA rewrites, application backend, or environment variables are required. Serve the
 whole `dist/` directory with directory-index support (normally enabled by default).
 Project HTML entries are generated in memory from `build/project.html`, using
 the required MDX frontmatter slugs in `src/content/projects/` to discover routes.
@@ -35,15 +41,32 @@ template.
 
 ## Analytics
 
-Production builds include the [Google Analytics tag](https://developers.google.com/tag-platform/gtagjs)
-on every page using measurement ID `G-70NFLBGY8H`, configured in `vite.config.ts`.
-The tag is omitted from `npm run dev`; previews of production builds include it.
-After deployment, visit the site and check the property's Realtime report.
+Google Analytics (`G-70NFLBGY8H`, configured in `src/lib/analytics.ts`) loads
+only after **Accept analytics** in production builds. Before consent and after
+rejection, no Google Analytics script is loaded. Development never sends analytics.
+**Cookie settings** in the footer lets visitors change their choice. Withdrawal
+removes accessible GA cookies and reloads the page to unload the tag. Preferences
+expire after 180 days; analytics cookies are configured for 30 days.
+
+The privacy notice lives in `src/content/privacy.mdx` and is served at `/privacy/`.
+It covers analytics, preference storage, Cloudflare, Cal.com, and embedded media.
+Review it when integrations or processing practices change.
 
 ## Cloudflare deployment from GitHub
 
-The site uses Workers Static Assets, configured in `wrangler.jsonc`. No Worker
-script, database, runtime secrets, or Cloudflare Vite plugin is needed.
+The site uses Workers Static Assets, configured in `wrangler.jsonc`. A small
+`worker/index.ts` handler runs first to redirect HTTP to HTTPS, preserving the
+path and query, then forwards to the asset binding. Loopback development hosts
+remain on HTTP. No database, runtime secrets, or Cloudflare Vite plugin is needed.
+Worker-first routing invokes the Worker for asset requests; normal Workers
+request limits/billing apply. Cloudflare's **SSL/TLS > Edge Certificates > Always
+Use HTTPS** can additionally redirect at the zone before the Worker runs.
+
+`public/_headers` configures HSTS (without forcing subdomains), CSP, anti-framing,
+MIME-sniffing protection, referrer policy, and permissions policy. The CSP allows
+the current booking, analytics and video services. `public/_redirects` preserves
+previous blog URLs and `/projects/amplio/`. Both files are copied into `dist/`.
+Other static hosts need equivalent HTTPS, header and redirect configuration.
 
 Commit and push the site files, `wrangler.jsonc`, `package.json`, and
 `package-lock.json` to GitHub. In Cloudflare **Workers & Pages**, create a Worker
@@ -78,7 +101,7 @@ npm run preview:cloudflare
 ```
 
 Open the URL printed by Wrangler. Verify `/`, `/about.html` (redirects to
-`/about`), `/blog/`, a project and blog post URL, and a nonexistent URL (HTTP 404).
+`/about`), `/blog/`, `/privacy/`, a project and blog post URL, and a nonexistent URL (HTTP 404).
 The site uses directory indexes, not an SPA fallback.
 
 After verifying the deployed `workers.dev` URL, add `rendulic.dev` under
@@ -100,6 +123,7 @@ Install the test browser once after `npm ci` (and again after Playwright upgrade
 ```sh
 npx playwright install chromium
 npm run test:e2e          # Local desktop and mobile Chromium tests
+npm run test:e2e:production # Build, then test consent, headers and redirects in local Wrangler
 npm run test:e2e:ui       # Interactive test runner
 npm run test:e2e:report   # Open the latest HTML report
 npm run check:all         # Existing checks, then local browser tests
@@ -111,6 +135,10 @@ exercise development routes, not the production static host. The default suite
 blocks external requests and checks navigation, project refreshes, expandable
 details, keyboard focus, and horizontal overflow at desktop and mobile sizes.
 Mobile runs emulate Pixel 7 in Chromium; they do not test Safari or a physical phone.
+`test:e2e:production` uses the same port with local Wrangler and verifies opt-in,
+rejection, withdrawal, blocked storage, keyboard controls, security headers and
+old-URL redirects. It mocks Google Analytics; it does not send real test visits
+to the Analytics property.
 
 The live Cal.com popup has its own opt-in smoke test:
 
@@ -161,7 +189,7 @@ needed to load the newly configured Chrome DevTools MCP integration.
   `blog/index.html` supplies its metadata and static build entry; the output is
   `dist/blog/index.html`. Post pages link back to this index.
 - `src/content/blog/post-01.mdx`: first blog post. Edit the body here when ready;
-  its `slug` creates `/blog/how-i-process-10000-emails-a-day/`. Blog frontmatter
+  its `slug` creates `/blog/how-i-process-over-5-million-emails-a-year/`. Blog frontmatter
   uses `slug`, `title`, `description`, `image`, and `imageAlt`, with no role.
   The `image` is displayed as a homepage thumbnail, on the blog index, and above
   the post body. Images live
@@ -173,8 +201,7 @@ needed to load the newly configured Chrome DevTools MCP integration.
 These MDX files compile to React at build time; there is no browser Markdown
 parser. Only compile trusted, repository-owned MDX. Add verified project
 descriptions, impact, career history, and contact details before publishing.
-The initial copy explicitly marks unfinished sections and makes no claims
-about employers, years of experience, or project metrics.
+Keep professional claims and metrics consistent across the narrative and outcomes.
 
 The homepage shows a responsive grid of project names linking to their detail
 pages, followed by blog posts when entries exist. The Blog section and
@@ -210,7 +237,8 @@ slugs report both files. Quote YAML values containing
 special syntax, for example `title: 'Food: "Lens" & <AI>'`. Project article edits
 reload development pages to refresh both content and HTML metadata.
 
-Changing a displayed title does not change its filename or URL. The explicit
+Changing a displayed title does not change its filename or URL. Preserve published
+URLs in `public/_redirects` when changing a slug. The explicit
 `slug` controls the URL independently of the MDX filename. The former numbered
 project URLs have been removed without redirects.
 

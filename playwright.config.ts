@@ -1,7 +1,11 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const production = !!process.env.E2E_PRODUCTION
+
 export default defineConfig({
   testDir: './e2e',
+  testMatch: production ? ['**/privacy.spec.ts', '**/security.spec.ts'] : undefined,
+  testIgnore: production ? [] : ['**/privacy.spec.ts', '**/security.spec.ts'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -20,7 +24,9 @@ export default defineConfig({
     { name: 'mobile-chromium', use: { ...devices['Pixel 7'] } },
   ],
   webServer: {
-    command: 'npm run dev -- --host 127.0.0.1 --port 4174 --strictPort',
+    command: production
+      ? 'CLOUDFLARE_SEND_METRICS=false WRANGLER_LOG_PATH=/tmp/rendulic-e2e-wrangler.log wrangler dev --local --ip 127.0.0.1 --port 4174'
+      : 'npm run dev -- --host 127.0.0.1 --port 4174 --strictPort',
     url: 'http://127.0.0.1:4174',
     // Never silently test a stale server or a different checkout.
     reuseExistingServer: false,

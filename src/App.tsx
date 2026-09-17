@@ -5,6 +5,8 @@ import ProjectPage from '@/components/ProjectPage'
 import BlogPage from '@/components/BlogPage'
 import BlogIndexPage from '@/components/BlogIndexPage'
 import About from '@/content/about.mdx'
+import Privacy from '@/content/privacy.mdx'
+import AnalyticsConsent from '@/components/AnalyticsConsent'
 import Expertise from '@/content/expertise.mdx'
 import Intro from '@/content/intro.mdx'
 import Projects from '@/content/projects.mdx'
@@ -31,6 +33,7 @@ function Section({ id, number, title, children }: {
 export default function App() {
   const pathname = window.location.pathname
   const isAbout = pathname === '/about' || pathname === '/about.html'
+  const isPrivacy = pathname === '/privacy' || pathname === '/privacy/' || pathname === '/privacy/index.html'
   const isBlog = pathname === '/blog' || pathname === '/blog/' || pathname === '/blog/index.html'
   const isHome = pathname === '/' || pathname === '/index.html'
   const project = projects.find(({ slug }) => (
@@ -81,7 +84,12 @@ export default function App() {
         </header>
 
         <main id="main" tabIndex={-1}>
-          {project ? <ProjectPage project={project} /> : post ? <BlogPage post={post} /> : isBlog ? <BlogIndexPage /> : isAbout ? (
+          {project ? <ProjectPage project={project} /> : post ? <BlogPage post={post} /> : isBlog ? <BlogIndexPage /> : isPrivacy ? (
+            <section aria-labelledby="privacy-heading" className="py-16 sm:py-20">
+              <h1 id="privacy-heading" className="mb-8 font-head text-5xl tracking-tight sm:text-7xl">Privacy</h1>
+              <div className="prose"><Privacy /></div>
+            </section>
+          ) : isAbout ? (
             <section aria-labelledby="about-heading" className="py-16 sm:py-20">
               <h1 id="about-heading" className="mb-8 font-head text-5xl tracking-tight sm:text-7xl">About</h1>
               <div className="prose"><About /></div>
@@ -172,6 +180,8 @@ export default function App() {
 
         <footer className="flex flex-wrap justify-between gap-4 border-t-2 py-7 font-mono text-xs">
           <p>© {new Date().getFullYear()} {site.name}</p>
+          <a href="/privacy/" className="inline-flex min-h-11 items-center underline underline-offset-4">Privacy</a>
+          <AnalyticsConsent />
           <a href="#main" className="underline underline-offset-4">Back to top ↑</a>
         </footer>
       </div>

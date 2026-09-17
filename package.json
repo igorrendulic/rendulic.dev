@@ -14,6 +14,7 @@
     "typecheck": "tsc -b",
     "test": "node --experimental-strip-types --test build/*.test.ts",
     "test:e2e": "playwright test",
+    "test:e2e:production": "npm run build && E2E_PRODUCTION=1 playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:live": "E2E_LIVE=1 playwright test --grep @live",
     "test:e2e:report": "playwright show-report",
