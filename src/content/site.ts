@@ -1,6 +1,7 @@
 import type { MDXContent } from 'mdx/types'
 import type { BlogMetadata } from './blog-metadata'
 import Post01, { metadata as post01 } from './blog/post-01.mdx'
+import Post02, { metadata as post02 } from './blog/post-02.mdx'
 import Project01, { metadata as project01 } from './projects/project-01.mdx'
 import Project02, { metadata as project02 } from './projects/project-02.mdx'
 import Project03, { metadata as project03 } from './projects/project-03.mdx'
@@ -16,6 +17,7 @@ export type BlogPost = BlogMetadata & { Content: MDXContent }
 
 // Post metadata and stable URL slugs come from MDX. List newest first.
 export const posts: BlogPost[] = [
+  { ...post02, Content: Post02 },
   { ...post01, Content: Post01 },
 ]
 

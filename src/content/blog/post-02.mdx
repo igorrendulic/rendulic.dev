@@ -1,0 +1,186 @@
+---
+slug: building-crypto-payments-without-the-crypto-ux
+title: Building Crypto Payments Without the Crypto UX
+description: Content coming soon.
+image: /images/projects/mailio-wallet.webp
+imageAlt: Mailio wallet showing a USDC balance and payment controls.
+---
+
+While traveling in Europe, I had two recurring problems. My US cards didn’t always work, and transferring money to my Revolut account was unpredictable. Sometimes it arrived almost immediately; other times it took several business days. More importantly, I couldn’t tell beforehand which one would happen.
+
+My requirement was simple: **move money from the US to Europe in roughly 20 minutes, including on weekends.** 
+
+Stablecoins turned out to be a useful transport layer for this.
+
+## USDC as the payment rail 
+
+Mailio uses embedded wallets built on Coinbase’s CDP infrastructure. I use USDC on Base as the starting point, while Revolut accepts USDC deposits on Polygon.
+
+That means getting money into Revolut requires a cross-chain transfer:
+```
+US → USDC on Base → CCTP → USDC on Polygon → Revolut → EUR
+```
+
+For this I use <a href="https://www.circle.com/cross-chain-transfer-protocol" target="_blank">Circle’s Cross-Chain Transfer Protocol (CCTP)</a>, which is a protocol that allows two chains to communicate with each other. 
+
+CCTP doesn’t work like a traditional bridge that locks an asset on one chain and issues a wrapped version on another. USDC is burned on Base, Circle provides an attestation for that burn, and native USDC is then minted on Polygon.
+
+## Why put the wallet in Mailio?
+
+Mailio primarily uses passkeys, preferably backed by device biometrics. But possession of the device/passkey alone isn’t sufficient to recover the secrets protecting the account.
+
+Mailio uses Shamir Secret Sharing so that the material required to unlock the account is split. One share is held by Mailio, while recovery material gives the user access to the additional shares required to reconstruct the secret.
+
+The important property is that Mailio’s share is insufficient on its own, and stealing only the user’s device or passkey is also insufficient.
+
+Conceptually:
+```
+device/passkey
+      +
+user-controlled secret material
+      +
+Mailio share
+      ↓
+account access
+```
+
+A recovery key allows the user to recover enough of their side of the Shamir shares to regain access. Mailio never has enough secret material by itself to reconstruct the user’s secrets.
+
+That security model already existed in Mailio. Once I started putting actual money behind an embedded wallet, it became considerably more meaningful.
+
+I didn’t want a wallet protected simply by “I have access to this browser session.” I wanted compromising one component—Mailio, a device, or a credential—to be insufficient by itself.
+
+It made me reasonably comfortable using the same account as the entry point to a wallet containing money.
+
+## A wallet that deliberately does less
+
+The second decision was to **not build a general-purpose crypto wallet.**
+
+An Ethereum-compatible address can receive essentially arbitrary ERC-20 tokens. That doesn’t mean Mailio needs to treat all of them as meaningful.
+
+For the purpose I was trying to solve, the wallet has one job:
+```
+move USDC.
+```
+
+I don’t need a token portfolio. I don’t need NFTs. I don’t need to show every random token somebody sends to the address.
+
+This is partly a UX decision, but also a security decision.
+
+One common crypto scam is to send assets or transactions to wallets specifically so that they appear in wallet history or token lists. A general-purpose wallet has to decide how to display all of this untrusted blockchain state.
+
+Mailio can mostly avoid the problem by defining a much smaller product surface.
+
+The blockchain may say:
+```
+Wallet
+├── USDC
+├── RANDOMTOKEN
+├── CLAIM-5000-USDC
+├── some NFT
+└── ...
+```
+
+Mailio can say:
+```
+Balance: 247.35 USDC
+```
+
+Everything else is irrelevant to the purpose of the wallet.
+
+The chain remains permissionless. Mailio doesn’t pretend those other assets don’t exist. It simply doesn’t elevate arbitrary blockchain input into trusted application UI.
+
+## Then email identity becomes useful 
+
+Once the wallet is both embedded and deliberately narrow, Mailio’s existing identity model becomes interesting for another reason.
+
+Mailio already has **handshakes**.
+
+A handshake is a cryptographically signed relationship between identities that have communicated or explicitly connected. A personal handshake is simply an easier way to intentionally establish the same relationship.
+
+I wouldn’t describe a handshake as proving that somebody is trustworthy. It establishes something narrower:
+
+**These identities have an existing, cryptographically established relationship.**
+
+That’s useful for payments.
+
+Instead of making the primary payment interface:
+```
+0x71C7d8D4fA7...
+Polygon
+USDC
+$50
+```
+
+it can eventually be:
+```
+Bob <bob@example.com>
+$50
+```
+
+Mailio resolves the identity to the underlying wallet and figures out the payment route.
+
+The wallet address becomes routing information, not the person’s identity.
+
+## Using the relationship as a payment signal
+
+There’s another consequence.
+
+A normal wallet knows you’re sending USDC to an address. Mailio potentially knows something about your relationship with the identity controlling that address.
+
+Before a transfer, it can ask:
+
+* Do you have a handshake?
+* Have you communicated before?
+* When did you last communicate?
+* Have you previously sent money to this identity?
+* Is this a completely new relationship?
+
+That doesn’t tell Mailio whether a transaction is legitimate. But it provides useful context.
+
+Sending $50 to someone with an established handshake and recent communication history is different from sending $2,000 to an identity first seen today.
+
+Instead of pretending to know whether the latter is fraudulent, Mailio can say exactly what it knows:
+
+> You don’t have an established handshake with this recipient and haven’t previously communicated with this identity.
+
+Or:
+
+> You have a handshake with this recipient, but you haven’t interacted with this identity in 18 months.
+
+That’s a much more useful warning than asking someone to verify the first and last four characters of a hexadecimal address.
+
+## Hiding the crypto, not the control
+
+The pieces now fit together in a way I hadn’t originally planned:
+
+```
+Mailio identity
+      ↓
+passkey + secret protection
+      ↓
+embedded wallet
+      ↓
+relationship / handshake checks
+      ↓
+USDC
+      ↓
+Base ── CCTP ──► Polygon
+      ↓
+external financial system
+```
+Coinbase’s infrastructure can sponsor gas, so users don’t need to maintain ETH simply to transfer USDC. CCTP handles the chain transition. Mailio resolves identities to wallets. Random ERC-20s don’t need to become part of the product at all.
+
+The user can still export their wallet keys. The blockchain transactions still exist and can be inspected. The abstraction doesn’t require taking control away from the user.
+
+It just means the normal operation can eventually be:
+
+> Send Bob $50.
+
+Underneath that sentence are identity resolution, authentication, secret reconstruction, wallet operations, network selection, CCTP burns and attestations, destination transactions, retries, and blockchain settlement.
+
+Those are interesting engineering problems.
+
+They’re just not necessarily good user interfaces.
+
+That’s increasingly how I think about crypto in Mailio: **not as the product, but as a payment rail that should mostly disappear behind the product.** 
